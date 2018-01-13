@@ -1,0 +1,2 @@
+# cppbase
+C++ Project Template

@@ -31,20 +31,23 @@
 #
 # Package information
 #
-AC_INIT([C++ Project Template],
+AC_INIT([C++ Base Library],
 	[0.0.1],
 	[zizztux.lee@gmail.com],
-	[cppbase],
-	[https://github.com/zizztux/cppbase])
+	[libcppbase],
+	[https://github.com/zizztux/libcppbase])
 
 #
 # Checks for system
 #
-AC_CONFIG_SRCDIR([../../include/common.h])
+AC_CONFIG_SRCDIR([../../include/cppbase.h])
 AC_CONFIG_AUX_DIR([scripts])
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
+
+: ${CFLAGS=""}
+: ${CXXFLAGS=""}
 
 #
 # Checks for programs
@@ -52,15 +55,20 @@ AC_CANONICAL_TARGET
 AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_CXX
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MKDIR_P
+AC_PROG_RANLIB
 AC_CHECK_TOOL([AR], [ar])
+AC_CHECK_TOOL([AS], [as])
 AC_CHECK_TOOL([LD], [ld])
 AC_CHECK_TOOL([NM], [nm])
 AC_CHECK_TOOL([OBJCOPY], [objcopy])
 AC_CHECK_TOOL([OBJDUMP], [objdump])
 AC_CHECK_TOOL([STRIP], [strip])
+AC_PATH_PROG([LDCONFIG], [ldconfig], , [$PATH:/sbin:/usr/sbin])
 AC_HEADER_STDC
 
-# Define is_cross_compiler to save on calls to 'test'.
 is_cross_compiler=
 if test x"${host}" = x"${target}" ; then
   is_cross_compiler=no
@@ -69,12 +77,19 @@ else
 fi
 
 #
-# Substitution for extra flags
+# Checks for build environment
 #
-AC_SUBST(CFLAGS_FOR_HOST)
-AC_SUBST(CPPFLAGS_FOR_HOST)
-AC_SUBST(CXXFLAGS_FOR_HOST)
-AC_SUBST(LDFLAGS_FOR_HOST)
+AC_LANG([C++])
+
+#
+# Substitution for toolchain flags
+#
+AC_SUBST([ARFLAGS])
+AC_SUBST([ASFLAGS])
+AC_SUBST([CFLAGS])
+AC_SUBST([CPPFLAGS])
+AC_SUBST([CXXFLAGS])
+AC_SUBST([LDFLAGS])
 
 #
 # Output

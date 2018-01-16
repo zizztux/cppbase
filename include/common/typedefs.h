@@ -1,5 +1,5 @@
-#ifndef __CPPBASE_H__
-#define __CPPBASE_H__
+#ifndef __TYPEDEFS_H__
+#define __TYPEDEFS_H__
 
 /*
  * Copyright (c) 2017-2018, SeungRyeol Lee
@@ -31,19 +31,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <cassert>
+#include <cstddef>
 #include <cstdint>
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-void func_asm(void);
-uint32_t func_c(uint32_t *);
-#ifdef __cplusplus
-}
-#endif
-
-extern uint32_t func_cpp(uint32_t *);
 
 // vi: set ts=4 sw=4 sts=4 noexpandtab:
 #endif

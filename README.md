@@ -1,2 +1,2 @@
-# cppbase
-C++ Project Template
+# libcppbase
+C++ Base Library

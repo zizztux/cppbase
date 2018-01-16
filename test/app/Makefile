@@ -28,40 +28,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-PROJECT := @PACKAGE_TARNAME@
-VERSION := @PACKAGE_VERSION@
-MAJOR := $(word 1,$(subst ., ,$(VERSION)))
-MINOR := $(word 2,$(subst ., ,$(VERSION)))
-PATCH := $(word 3,$(subst ., ,$(VERSION)))
-
-#
-# Toolchain
-#
-export AR := @AR@
-export AS := @AS@
-export CC := @CC@
-export CPP := @CPP@
-export CXX := @CXX@
-export INSTALL := @INSTALL@ -p
-export LD := @LD@
-export LDCONFIG := @LDCONFIG@
-export LN_S := @LN_S@
-export MKDIR_P := @MKDIR_P@
-export NM := @NM@
-export OBJCOPY := @OBJCOPY@
-export OBJDUMP := @OBJDUMP@
-export RANLIB := @RANLIB@
-export STRIP := @STRIP@
-
 #
 # Directories and files
 #
 TOP_DIR := ../..
 HDR_DIR := $(TOP_DIR)/include
-SRC_DIR := $(TOP_DIR)/src
-TEST_DIR := $(TOP_DIR)/test
-OUTPUT_DIR := ./obj
-INSTALL_DIR := @prefix@
+OUTPUT_DIR := $(TOP_DIR)/test
 
 OUTPUT := $(OUTPUT_DIR)/$(PROJECT).so.$(VERSION)
 HDRS += $(addprefix $(HDR_DIR)/,cppbase.h)
@@ -74,16 +46,12 @@ OBJS += $(patsubst $(SRC_DIR)/%.S,$(OUTPUT_DIR)/%.o,$(filter %.S,$(SRCS)))
 #
 # Build options
 #
-ARFLAGS := @ARFLAGS@
-ASFLAGS := @ASFLAGS@
-CPPFLAGS := -I$(shell pwd)/$(HDR_DIR) -DVERSION=\"$(VERSION)\" @CPPFLAGS@
-CFLAGS := -fPIC -Wall -O2 @CFLAGS@
-CXXFLAGS := -std=c++1z -fPIC -Wall -O2 @CXXFLAGS@
-LDFLAGS := -lstdc++fs @LDFLAGS@
+CPPFLAGS := -I$(shell pwd)/$(HDR_DIR) -DVERSION=\"$(VERSION)\"
+CFLAGS := -fPIC -Wall -O2 
+CXXFLAGS := -std=c++1z -fPIC -Wall -O2 
+LDFLAGS := -lstdc++fs 
 ifeq ($(DEBUG),1)
-ARFLAGS +=
-ASFLAGS +=
-CPPFLAGS += -D__DEBUG
+CPPFLAGS +=
 CFLAGS += -g
 CXXFLAGS += -g
 LDFLAGS += -g
@@ -95,45 +63,10 @@ endif
 all: $(OUTPUT)
 
 $(OUTPUT): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -shared -Wl,-soname,$(patsubst %.$(MINOR).$(PATCH),%,$(notdir $@)) -o $@ $^ $(LDFLAGS)
-	$(LDCONFIG) -n $(dir $(OUTPUT)) &> /dev/null
-	$(LN_S) -f $(notdir $@) $(patsubst %.$(MAJOR).$(MINOR).$(PATCH),%,$@)
-	$(OBJDUMP) -drSgx $@ > $@.dis
-	$(NM) -lS $@ > $@.sym
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $@ $^ $(LDFLAGS)
 
 include $(TOP_DIR)/build/linux/rules.mk
 
-install: install-lib install-hdr
-
-install-hdr: $(HDRS)
-	$(INSTALL) -D -m 0644 -t $(INSTALL_DIR)/include $^
-
-install-lib: $(OUTPUT)
-	$(INSTALL) -D -m 0644 -s -t $(INSTALL_DIR)/lib $^
-	$(LDCONFIG) -n $(INSTALL_DIR)/lib &> /dev/null
-	$(LN_S) -f $(notdir $<) $(patsubst %.$(MAJOR).$(MINOR).$(PATCH),$(INSTALL_DIR)/lib/%,$(notdir $<))
-
-test: $(OUTPUT)
-	@for dir in $(wildcard $(TEST_DIR)/*); do \
-		$(MAKE) -C $$dir; \
-	done
-
-ctags:
-	ctags `find $(TOP_DIR)/ \( -name '*.[chsS]' -o -name '*.cc' -o -name '*.cpp' \) -print`
-
-cscope:
-	find $(TOP_DIR)/ \( -name '*.[chsS]' -o -name '*.cc' -o -name '*.cpp' \) -print > cscope.files
-	cscope -b -q -k
-
 clean:
-	@for dir in $(wildcard $(TEST_DIR)/*); do \
-		$(MAKE) -C $$dir clean; \
-	done
-	\rm -rf $(OUTPUT_DIR)
 
-distclean: clean
-	\rm -f Makefile
-	\rm -rf config.h config.h.in~ config.status config.log autom4te.cache
-	\rm -f tags cscope*
-
-.PHONY: all install install-hdr install-lib test ctags cscope clean distclean
+.PHONY: all clean

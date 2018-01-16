@@ -31,19 +31,19 @@
 .SUFFIXES: .c .cc .cpp .d .o .S
 
 $(OUTPUT_DIR)/%.d: $(SRC_DIR)/%.c
-	@mkdir -p $(dir $@)
+	@$(MKDIR_P) $(dir $@)
 	@$(CC) $(CFLAGS) $(CPPFLAGS) -MM -MP -MT "$(@:.d=.o) $@" -MF $@ $<
 
 $(OUTPUT_DIR)/%.d: $(SRC_DIR)/%.cc
-	@mkdir -p $(dir $@)
+	@$(MKDIR_P) $(dir $@)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM -MP -MT "$(@:.d=.o) $@" -MF $@ $<
 
 $(OUTPUT_DIR)/%.d: $(SRC_DIR)/%.cpp
-	@mkdir -p $(dir $@)
+	@$(MKDIR_P) $(dir $@)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM -MP -MT "$(@:.d=.o) $@" -MF $@ $<
 
 $(OUTPUT_DIR)/%.d: $(SRC_DIR)/%.S
-	@mkdir -p $(dir $@)
+	@$(MKDIR_P) $(dir $@)
 	@$(CC) $(CFLAGS) $(CPPFLAGS) -D__ASSEMBLY__ -MM -MP -MT "$(@:.d=.o) $@" -MF $@ $<
 
 $(OUTPUT_DIR)/%.o: $(SRC_DIR)/%.c

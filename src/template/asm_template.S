@@ -30,9 +30,9 @@
 
 	.text
 
-.align	3
-.globl	__arch_init
-__arch_init:
+.align	4
+.globl	func_asm
+func_asm:
 	ret
 
 // vi: set ts=4 sw=4 sts=4 noexpandtab:

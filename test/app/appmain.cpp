@@ -28,9 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <cstdint>
+#include <iomanip>
 #include <iostream>
 
-#include <common.h>
+#include <cbase.h>
 #include <cppbase.h>
 
 using namespace std;
@@ -39,10 +41,15 @@ using namespace std;
 int
 main(int argc, char *argv[])
 {
-	_arch_init();
-	_plat_init();
+	uint32_t param32 = 0xdeadbeef;
+	uint64_t param64 = 0x1055cafe1055cafe;
 
 	wcout << L"Hello, world!!" << endl;
+	ios::fmtflags f(wcout.flags());
+	wcout << L"0x" << hex << setw(sizeof (decltype (param32)) * 2) << show_ptr(&param32) << endl;
+	wcout.flags(f);
+	wcout << L"0x" << hex << setw(sizeof (decltype (param64)) * 2) << showPtr(&param64) << endl;
+	wcout.flags(f);
 
 	return 0;
 }

@@ -1,6 +1,3 @@
-#ifndef __COMMON_H__
-#define __COMMON_H__
-
 /*
  * Copyright (c) 2017-2018, SeungRyeol Lee
  * All rights reserved.
@@ -31,13 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __cplusplus
-#include <cassert>
-#include <cstddef>
-#include <cstdint>
-#else
 #include <stdint.h>
-#endif
+
+
+uint32_t
+func_c(uint32_t *p)
+{
+	return *p;
+}
 
 // vi: set ts=4 sw=4 sts=4 noexpandtab:
-#endif

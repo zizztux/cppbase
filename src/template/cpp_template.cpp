@@ -28,14 +28,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <common.h>
-#include <cppbase.h>
+#include <common/typedefs.h>
+
+using namespace std;
 
 
-int
-_plat_init()
+uint32_t
+func_cpp(const uint32_t *p)
 {
-	return 0;
+	return *p;
 }
 
 // vi: set ts=4 sw=4 sts=4 noexpandtab:

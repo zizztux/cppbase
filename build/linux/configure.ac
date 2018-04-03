@@ -33,7 +33,7 @@
 #
 AC_INIT([C++ Base Library],
 	[0.0.1],
-	[zizztux.lee@gmail.com],
+	[zizztux@gmail.com],
 	[libcppbase],
 	[https://github.com/zizztux/libcppbase])
 

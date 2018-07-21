@@ -41,17 +41,17 @@ using namespace std;
 int
 main(int argc, char *argv[])
 {
-	uint32_t param32 = 0xdeadbeef;
-	uint64_t param64 = 0x1055cafe1055cafe;
+  uint32_t param32 = 0xdeadbeef;
+  uint64_t param64 = 0x1055cafe1055cafe;
 
-	wcout << L"Hello, world!!" << endl;
-	ios::fmtflags f(wcout.flags());
-	wcout << L"0x" << hex << setw(sizeof (decltype (param32)) * 2) << show_ptr(&param32) << endl;
-	wcout.flags(f);
-	wcout << L"0x" << hex << setw(sizeof (decltype (param64)) * 2) << showPtr(&param64) << endl;
-	wcout.flags(f);
+  wcout << L"Hello, world!!" << endl;
+  ios::fmtflags f(wcout.flags());
+  wcout << L"0x" << hex << setw(sizeof (decltype (param32)) * 2) << show_ptr(&param32) << endl;
+  wcout.flags(f);
+  wcout << L"0x" << hex << setw(sizeof (decltype (param64)) * 2) << showPtr(&param64) << endl;
+  wcout.flags(f);
 
-	return 0;
+  return 0;
 }
 
-// vi: set ts=4 sw=4 sts=4 noexpandtab:
+// vi: set ts=2 sw=2 sts=2 expandtab:

@@ -34,7 +34,7 @@
 uint32_t
 func_c(uint32_t *p)
 {
-	return *p;
+  return *p;
 }
 
-// vi: set ts=4 sw=4 sts=4 noexpandtab:
+// vi: set ts=2 sw=2 sts=2 expandtab:

@@ -35,20 +35,20 @@ template<typename T>
 class Singleton
 {
 protected:
-	Singleton() = default;
+  Singleton() = default;
 
 private:
-	Singleton(const Singleton &) = delete;
-	Singleton &operator=(const Singleton &) = delete;
+  Singleton(const Singleton &) = delete;
+  Singleton &operator=(const Singleton &) = delete;
 
 public:
-	template<typename ... Ts>
-	static T &getInstance(Ts && ... args)
-	{
-		static T instance{std::forward<Ts>(args) ...};
-		return instance;
-	}
+  template<typename ... Ts>
+  static T &getInstance(Ts && ... args)
+  {
+    static T instance{std::forward<Ts>(args) ...};
+    return instance;
+  }
 };
 
-// vi: set ts=4 sw=4 sts=4 noexpandtab:
+// vi: set ts=2 sw=2 sts=2 expandtab:
 #endif

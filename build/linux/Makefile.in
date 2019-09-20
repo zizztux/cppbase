@@ -119,10 +119,10 @@ test: $(OUTPUT)
 	done
 
 ctags:
-	ctags `find $(TOP_DIR)/ \( -name '*.[chsS]' -o -name '*.cc' -o -name '*.cpp' \) -print`
+	ctags `find $(TOP_DIR)/ \( -name '*.[chsS]' -o -name '*.hpp' -o -name '*.cc' -o -name '*.cpp' \) -print`
 
 cscope:
-	find $(TOP_DIR)/ \( -name '*.[chsS]' -o -name '*.cc' -o -name '*.cpp' \) -print > cscope.files
+	find $(TOP_DIR)/ \( -name '*.[chsS]' -o -name '*.hpp' -o -name '*.cc' -o -name '*.cpp' \) -print > cscope.files
 	cscope -b -q -k
 
 clean:

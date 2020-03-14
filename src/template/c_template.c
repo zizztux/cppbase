@@ -36,5 +36,3 @@ func_c(uint32_t *p)
 {
   return *p;
 }
-
-// vi: set ts=2 sw=2 sts=2 expandtab:

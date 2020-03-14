@@ -45,5 +45,4 @@ uint32_t func_c(uint32_t *);
 
 extern uint32_t func_cpp(uint32_t *);
 
-// vi: set ts=2 sw=2 sts=2 expandtab:
 #endif

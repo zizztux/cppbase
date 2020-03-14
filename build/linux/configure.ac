@@ -59,12 +59,6 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MKDIR_P
 AC_PROG_RANLIB
-AC_CHECK_TOOL([AR], [ar])
-AC_CHECK_TOOL([AS], [as])
-AC_CHECK_TOOL([LD], [ld])
-AC_CHECK_TOOL([NM], [nm])
-AC_CHECK_TOOL([OBJCOPY], [objcopy])
-AC_CHECK_TOOL([OBJDUMP], [objdump])
 AC_CHECK_TOOL([STRIP], [strip])
 AC_PATH_PROG([LDCONFIG], [ldconfig], , [$PATH:/sbin:/usr/sbin])
 AC_HEADER_STDC
@@ -84,8 +78,6 @@ AC_LANG([C++])
 #
 # Substitution for toolchain flags
 #
-AC_SUBST([ARFLAGS])
-AC_SUBST([ASFLAGS])
 AC_SUBST([CFLAGS])
 AC_SUBST([CPPFLAGS])
 AC_SUBST([CXXFLAGS])

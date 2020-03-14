@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-.SUFFIXES: .c .cc .cpp .d .o .S
+.SUFFIXES: .c .cc .cpp .d .o
 
 $(OUTPUT_DIR)/%.d: $(SRC_DIR)/%.c
 	@$(MKDIR_P) $(dir $@)
@@ -42,10 +42,6 @@ $(OUTPUT_DIR)/%.d: $(SRC_DIR)/%.cpp
 	@$(MKDIR_P) $(dir $@)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM -MP -MT "$(@:.d=.o) $@" -MF $@ $<
 
-$(OUTPUT_DIR)/%.d: $(SRC_DIR)/%.S
-	@$(MKDIR_P) $(dir $@)
-	@$(CC) $(CFLAGS) $(CPPFLAGS) -D__ASSEMBLY__ -MM -MP -MT "$(@:.d=.o) $@" -MF $@ $<
-
 $(OUTPUT_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
@@ -55,10 +51,6 @@ $(OUTPUT_DIR)/%.o: $(SRC_DIR)/%.cc
 $(OUTPUT_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 
-$(OUTPUT_DIR)/%.o: $(SRC_DIR)/%.S
-	$(CC) $(CFLAGS) $(CPPFLAGS) -D__ASSEMBLY__ -c -o $@ $<
-
 -include $(patsubst $(SRC_DIR)/%.c,$(OUTPUT_DIR)/%.d,$(filter %.c,$(SRCS)))
 -include $(patsubst $(SRC_DIR)/%.cc,$(OUTPUT_DIR)/%.d,$(filter %.cc,$(SRCS)))
 -include $(patsubst $(SRC_DIR)/%.cpp,$(OUTPUT_DIR)/%.d,$(filter %.cpp,$(SRCS)))
--include $(patsubst $(SRC_DIR)/%.S,$(OUTPUT_DIR)/%.d,$(filter %.S,$(SRCS)))

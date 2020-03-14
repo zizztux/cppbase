@@ -31,7 +31,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-template<typename T>
+template <typename T>
 class Singleton
 {
 protected:
@@ -42,7 +42,7 @@ private:
   Singleton &operator=(const Singleton &) = delete;
 
 public:
-  template<typename ... Ts>
+  template <typename ... Ts>
   static T &getInstance(Ts && ... args)
   {
     static T instance{std::forward<Ts>(args) ...};

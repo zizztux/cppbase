@@ -37,19 +37,13 @@ PATCH := $(word 3,$(subst ., ,$(VERSION)))
 #
 # Toolchain
 #
-export AR := @AR@
-export AS := @AS@
 export CC := @CC@
 export CPP := @CPP@
 export CXX := @CXX@
 export INSTALL := @INSTALL@ -p
-export LD := @LD@
 export LDCONFIG := @LDCONFIG@
 export LN_S := @LN_S@
 export MKDIR_P := @MKDIR_P@
-export NM := @NM@
-export OBJCOPY := @OBJCOPY@
-export OBJDUMP := @OBJDUMP@
 export RANLIB := @RANLIB@
 export STRIP := @STRIP@
 
@@ -65,25 +59,25 @@ INSTALL_DIR := @prefix@
 
 OUTPUT := $(OUTPUT_DIR)/$(PROJECT).so.$(VERSION)
 HDRS += $(addprefix $(HDR_DIR)/,cppbase.h)
-SRCS += $(addprefix $(SRC_DIR)/template/,asm_template.S c_template.c cpp_template.cpp)
+SRCS += $(addprefix $(SRC_DIR)/template/,c_template.c cpp_template.cpp)
 OBJS += $(patsubst $(SRC_DIR)/%.c,$(OUTPUT_DIR)/%.o,$(filter %.c,$(SRCS)))
 OBJS += $(patsubst $(SRC_DIR)/%.cc,$(OUTPUT_DIR)/%.o,$(filter %.cc,$(SRCS)))
 OBJS += $(patsubst $(SRC_DIR)/%.cpp,$(OUTPUT_DIR)/%.o,$(filter %.cpp,$(SRCS)))
-OBJS += $(patsubst $(SRC_DIR)/%.S,$(OUTPUT_DIR)/%.o,$(filter %.S,$(SRCS)))
 
 #
 # Build options
 #
-ARFLAGS := @ARFLAGS@
-ASFLAGS := @ASFLAGS@
 CPPFLAGS := -I$(shell pwd)/$(HDR_DIR) -DVERSION=\"$(VERSION)\" @CPPFLAGS@
 CFLAGS := -fPIC -Wall -O2 @CFLAGS@
 CXXFLAGS := -std=c++1z -fPIC -Wall -O2 @CXXFLAGS@
 LDFLAGS := -lstdc++fs @LDFLAGS@
-ifeq ($(DEBUG),1)
-ARFLAGS +=
-ASFLAGS +=
-CPPFLAGS += -D__DEBUG
+ifeq ($(DEBUG),0)
+CPPFLAGS += -DNDEBUG
+CFLAGS +=
+CXXFLAGS +=
+LDFLAGS +=
+else
+CPPFLAGS +=
 CFLAGS += -g
 CXXFLAGS += -g
 LDFLAGS += -g
@@ -98,8 +92,6 @@ $(OUTPUT): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -shared -Wl,-soname,$(patsubst %.$(MINOR).$(PATCH),%,$(notdir $@)) -o $@ $^ $(LDFLAGS)
 	$(LDCONFIG) -n $(dir $(OUTPUT)) &> /dev/null
 	$(LN_S) -f $(notdir $@) $(patsubst %.$(MAJOR).$(MINOR).$(PATCH),%,$@)
-	$(OBJDUMP) -drSgx $@ > $@.dis
-	$(NM) -lS $@ > $@.sym
 
 include $(TOP_DIR)/build/linux/rules.mk
 

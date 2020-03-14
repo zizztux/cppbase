@@ -37,11 +37,10 @@ OUTPUT_DIR := $(TOP_DIR)/test
 
 OUTPUT := $(OUTPUT_DIR)/$(PROJECT).so.$(VERSION)
 HDRS += $(addprefix $(HDR_DIR)/,cppbase.h)
-SRCS += $(addprefix $(SRC_DIR)/template/,asm_template.S c_template.c cpp_template.cpp)
+SRCS += $(addprefix $(SRC_DIR)/template/,c_template.c cpp_template.cpp)
 OBJS += $(patsubst $(SRC_DIR)/%.c,$(OUTPUT_DIR)/%.o,$(filter %.c,$(SRCS)))
 OBJS += $(patsubst $(SRC_DIR)/%.cc,$(OUTPUT_DIR)/%.o,$(filter %.cc,$(SRCS)))
 OBJS += $(patsubst $(SRC_DIR)/%.cpp,$(OUTPUT_DIR)/%.o,$(filter %.cpp,$(SRCS)))
-OBJS += $(patsubst $(SRC_DIR)/%.S,$(OUTPUT_DIR)/%.o,$(filter %.S,$(SRCS)))
 
 #
 # Build options
@@ -50,7 +49,12 @@ CPPFLAGS := -I$(shell pwd)/$(HDR_DIR) -DVERSION=\"$(VERSION)\"
 CFLAGS := -fPIC -Wall -O2 
 CXXFLAGS := -std=c++1z -fPIC -Wall -O2 
 LDFLAGS := -lstdc++fs 
-ifeq ($(DEBUG),1)
+ifeq ($(DEBUG),0)
+CPPFLAGS += -DNDEBUG
+CFLAGS +=
+CXXFLAGS +=
+LDFLAGS +=
+else
 CPPFLAGS +=
 CFLAGS += -g
 CXXFLAGS += -g

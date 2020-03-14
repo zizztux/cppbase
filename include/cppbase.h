@@ -2,7 +2,7 @@
 #define __CPPBASE_H__
 
 /*
- * Copyright (c) 2017-2018, SeungRyeol Lee
+ * Copyright (c) 2017-2020, SeungRyeol Lee
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

@@ -31,46 +31,35 @@
 #
 # Directories and files
 #
-TOP_DIR := ../..
-HDR_DIR := $(TOP_DIR)/include
-OUTPUT_DIR := $(TOP_DIR)/test
-
-OUTPUT := $(OUTPUT_DIR)/$(PROJECT).so.$(VERSION)
-HDRS += $(addprefix $(HDR_DIR)/,cppbase.h)
-SRCS += $(addprefix $(SRC_DIR)/template/,c_template.c cpp_template.cpp)
-OBJS += $(patsubst $(SRC_DIR)/%.c,$(OUTPUT_DIR)/%.o,$(filter %.c,$(SRCS)))
-OBJS += $(patsubst $(SRC_DIR)/%.cc,$(OUTPUT_DIR)/%.o,$(filter %.cc,$(SRCS)))
-OBJS += $(patsubst $(SRC_DIR)/%.cpp,$(OUTPUT_DIR)/%.o,$(filter %.cpp,$(SRCS)))
+HDRS := $(wildcard *.h *.hpp)
+SRCS := $(wildcard *.c *.cc *.cpp)
 
 #
 # Build options
 #
-CPPFLAGS := -I$(shell pwd)/$(HDR_DIR) -DVERSION=\"$(VERSION)\"
-CFLAGS := -fPIC -Wall -O2 
-CXXFLAGS := -std=c++1z -fPIC -Wall -O2 
-LDFLAGS := -lstdc++fs 
+CPPFLAGS := -I../../include
+CFLAGS := -Wall -O2
+CXXFLAGS := -std=c++1z -Wall -O2
+LDFLAGS := -lcppbase -L../../build/obj
 ifeq ($(DEBUG),0)
 CPPFLAGS += -DNDEBUG
 CFLAGS +=
 CXXFLAGS +=
-LDFLAGS +=
 else
 CPPFLAGS +=
 CFLAGS += -g
 CXXFLAGS += -g
-LDFLAGS += -g
 endif
 
 #
 # Build targets
 #
-all: $(OUTPUT)
+all: app
 
-$(OUTPUT): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $@ $^ $(LDFLAGS)
-
-include $(TOP_DIR)/build/linux/rules.mk
+app: $(SRCS) $(HDRS)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $@ $(SRCS) $(LDFLAGS)
 
 clean:
+	\rm -f *.o app
 
 .PHONY: all clean

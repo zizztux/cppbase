@@ -28,28 +28,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cstdint>
-#include <iomanip>
 #include <iostream>
 
-#include <cbase.h>
-#include <cppbase.h>
+#include <Worker.hpp>
 
-using namespace std;
+
+class PreProcessor : public Worker
+{
+public:
+  virtual bool processJob(void* job) { std::cout << "Job: " << job << std::endl; return job != 0; }
+
+public:
+  PreProcessor() = default;
+  virtual ~PreProcessor() { }
+};
 
 
 int
 main(int argc, char *argv[])
 {
-  uint32_t param32 = 0xdeadbeef;
-  uint64_t param64 = 0x1055cafe1055cafe;
+  PreProcessor worker;
+  worker.start();
 
-  wcout << L"Hello, world!!" << endl;
-  ios::fmtflags f(wcout.flags());
-  wcout << L"0x" << hex << setw(sizeof (decltype (param32)) * 2) << show_ptr(&param32) << endl;
-  wcout.flags(f);
-  wcout << L"0x" << hex << setw(sizeof (decltype (param64)) * 2) << showPtr(&param64) << endl;
-  wcout.flags(f);
+  worker.scheduleJob((void*)5);
+  worker.scheduleJob((void*)2);
+  worker.scheduleJob((void*)9);
+  worker.scheduleJob((void*)0);
+
+  worker.finalize();
 
   return 0;
 }

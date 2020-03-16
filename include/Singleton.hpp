@@ -1,5 +1,5 @@
-#ifndef __SINGLETON_H__
-#define __SINGLETON_H__
+#ifndef __SINGLETON_HPP__
+#define __SINGLETON_HPP__
 
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
@@ -31,19 +31,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <utility>
+
+
 template <typename T>
 class Singleton
 {
-protected:
-  Singleton() = default;
-
 private:
-  Singleton(const Singleton &) = delete;
-  Singleton &operator=(const Singleton &) = delete;
+  Singleton(const Singleton&) = delete;
+  Singleton& operator=(const Singleton&) = delete;
 
 public:
   template <typename ... Ts>
-  static T &getInstance(Ts && ... args)
+  static T& getInstance(Ts&& ... args)
   {
     static T instance{std::forward<Ts>(args) ...};
     return instance;

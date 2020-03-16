@@ -1,5 +1,5 @@
-#ifndef __ASYNCQUEUE_H__
-#define __ASYNCQUEUE_H__
+#ifndef __BLOCKINGQUEUE_HPP__
+#define __BLOCKINGQUEUE_HPP__
 
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
@@ -34,109 +34,106 @@
 #include <condition_variable>
 #include <mutex>
 #include <queue>
-#include <standard.h>
 
 
 template <typename T>
-class AsyncQueue
+class BlockingQueue
 {
 public:
   bool empty() const;
   T front();
-  bool push(T item);
+  void push(T& item);
   T dequeue();
   void pop();
   size_t size() const;
 
-  AsyncQueue();
-  AsyncQueue(size_t capacity);
-  virtual ~AsyncQueue();
+public:
+  BlockingQueue() = default;
+  BlockingQueue(size_t capacity);
+  virtual ~BlockingQueue();
 
 private:
-  size_t _capacity;
+  size_t capacity_ = 5;
 
-  std::queue<T> _queue;
-  std::mutex _mutex;
-  std::condition_variable _cond;
+  std::queue<T> queue_;
+  std::mutex mutex_;
+  std::condition_variable push_avail_;
+  std::condition_variable pop_avail_;
 };
 
 
 template <typename T>
-bool AsyncQueue<T>::empty() const
+bool BlockingQueue<T>::empty() const
 {
-  std::unique_lock<std::mutex> lock(_mutex);
+  const std::lock_guard<std::mutex> lock(mutex_);
 
-  return _queue.empty();
+  return queue_.empty();
 }
 
 template <typename T>
-T &AsyncQueue<T>::front()
+T BlockingQueue<T>::front()
 {
-  std::unique_lock<std::mutex> lock(_mutex);
+  std::unique_lock<std::mutex> lock(mutex_);
 
-  while (_queue.empty())
-    _cond.wait(lock);
+  while (queue_.empty())
+    pop_avail_.wait(lock);
 
-  return _queue.front();
+  return queue_.front();
 }
 
 template <typename T>
-bool AsyncQueue<T>::push(T item)
+void BlockingQueue<T>::push(T& item)
 {
-  std::unique_lock<std::mutex> lock(_mutex);
+  std::unique_lock<std::mutex> lock(mutex_);
 
-  size_t size = _queue.size();
-  assert(size <= _capacity);
+  size_t size;
+  while ((size = queue_.size()) == capacity_)
+    push_avail_.wait(lock);
 
-  if (size >= _capacity)
-    return false;
-
-  _queue.push(item);
+  queue_.push(item);
   if (size == 0)
-    _cond.notify_all();
-
-  return true;
+    pop_avail_.notify_all();
 }
 
 template <typename T>
-T AsyncQueue<T>::dequeue()
+T BlockingQueue<T>::dequeue()
 {
-  std::unique_lock<std::mutex> lock(_mutex);
+  std::unique_lock<std::mutex> lock(mutex_);
 
-  while (_queue.empty())
-    _cond.wait(lock);
+  while (queue_.empty())
+    pop_avail_.wait(lock);
 
-  T item = _queue.front();
-  _queue.pop();
+  T item = queue_.front();
+  queue_.pop();
+
+  if (queue_.size() == capacity_ - 1)
+    push_avail_.notify_all();
 
   return item;
 }
 
 template <typename T>
-void AsyncQueue<T>::pop()
+void BlockingQueue<T>::pop()
 {
-  std::unique_lock<std::mutex> lock(_mutex);
+  std::unique_lock<std::mutex> lock(mutex_);
 
-  while (_queue.empty())
-    _cond.wait(lock);
+  while (queue_.empty())
+    pop_avail_.wait(lock);
 
-  _queue.pop();
+  queue_.pop();
+
+  if (queue_.size() == capacity_ - 1)
+    push_avail_.notify_all();
 }
 
 template <typename T>
-AsyncQueue<T>::AsyncQueue()
-  : _capacity(-1)
-{
-}
-
-template <typename T>
-AsyncQueue<T>::AsyncQueue(size_t capacity)
-  : _capacity(capacity)
+BlockingQueue<T>::BlockingQueue(size_t capacity)
+  : capacity_(capacity == 0 ? 1 : capacity)
 {
 }
 
 template <typename T>
-AsyncQueue<T>::~AsyncQueue()
+BlockingQueue<T>::~BlockingQueue()
 {
 }
 

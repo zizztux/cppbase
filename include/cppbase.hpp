@@ -1,3 +1,6 @@
+#ifndef __CPPBASE_HPP__
+#define __CPPBASE_HPP__
+
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
  * All rights reserved.
@@ -28,13 +31,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <common/typedefs.h>
+#include <cassert>
+#include <cstddef>
+#include <cstdint>
 
-using namespace std;
-
-
-uint32_t
-func_cpp(const uint32_t *p)
-{
-  return *p;
-}
+#endif

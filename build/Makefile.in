@@ -50,7 +50,7 @@ export STRIP := @STRIP@
 #
 # Directories and files
 #
-TOP_DIR := ../..
+TOP_DIR := ..
 HDR_DIR := $(TOP_DIR)/include
 SRC_DIR := $(TOP_DIR)/src
 TEST_DIR := $(TOP_DIR)/test
@@ -58,8 +58,8 @@ OUTPUT_DIR := ./obj
 INSTALL_DIR := @prefix@
 
 OUTPUT := $(OUTPUT_DIR)/$(PROJECT).so.$(VERSION)
-HDRS += $(addprefix $(HDR_DIR)/,cppbase.h)
-SRCS += $(addprefix $(SRC_DIR)/template/,c_template.c cpp_template.cpp)
+HDRS += $(wildcard $(HDR_DIR)/*.hpp)
+SRCS += $(wildcard $(SRC_DIR)/*.c $(SRC_DIR)/*.cc $(SRC_DIR)/*.cpp)
 OBJS += $(patsubst $(SRC_DIR)/%.c,$(OUTPUT_DIR)/%.o,$(filter %.c,$(SRCS)))
 OBJS += $(patsubst $(SRC_DIR)/%.cc,$(OUTPUT_DIR)/%.o,$(filter %.cc,$(SRCS)))
 OBJS += $(patsubst $(SRC_DIR)/%.cpp,$(OUTPUT_DIR)/%.o,$(filter %.cpp,$(SRCS)))
@@ -70,7 +70,7 @@ OBJS += $(patsubst $(SRC_DIR)/%.cpp,$(OUTPUT_DIR)/%.o,$(filter %.cpp,$(SRCS)))
 CPPFLAGS := -I$(shell pwd)/$(HDR_DIR) -DVERSION=\"$(VERSION)\" @CPPFLAGS@
 CFLAGS := -fPIC -Wall -O2 @CFLAGS@
 CXXFLAGS := -std=c++1z -fPIC -Wall -O2 @CXXFLAGS@
-LDFLAGS := -lstdc++fs @LDFLAGS@
+LDFLAGS := -lpthread -lstdc++fs @LDFLAGS@
 ifeq ($(DEBUG),0)
 CPPFLAGS += -DNDEBUG
 CFLAGS +=
@@ -93,7 +93,7 @@ $(OUTPUT): $(OBJS)
 	$(LDCONFIG) -n $(dir $(OUTPUT)) &> /dev/null
 	$(LN_S) -f $(notdir $@) $(patsubst %.$(MAJOR).$(MINOR).$(PATCH),%,$@)
 
-include $(TOP_DIR)/build/linux/rules.mk
+include $(TOP_DIR)/build/rules.mk
 
 install: install-lib install-hdr
 

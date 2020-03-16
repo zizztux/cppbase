@@ -1,5 +1,5 @@
-#ifndef __ASYNCPRIOQUEUE_H__
-#define __ASYNCPRIOQUEUE_H__
+#ifndef __BLOCKINGPRIOQUEUE_HPP__
+#define __BLOCKINGPRIOQUEUE_HPP__
 
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
@@ -34,7 +34,6 @@
 #include <condition_variable>
 #include <mutex>
 #include <queue>
-#include <standard.h>
 
 
 template <typename T, typename U>
@@ -47,6 +46,7 @@ public:
   void pop();
   bool empty();
 
+public:
   AsyncPrioQueue(U compare);
   AsyncPrioQueue(size_t capacity, U compare);
   virtual ~AsyncPrioQueue();

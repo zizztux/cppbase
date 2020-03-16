@@ -28,11 +28,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdint.h>
+#include <Worker.hpp>
 
 
-uint32_t
-func_c(uint32_t *p)
+std::thread::id
+Worker::start()
 {
-  return *p;
+  thread_ = new std::thread(&Worker::thread_loop, this);
+  return thread_->get_id();
+}
+
+void
+Worker::finalize()
+{
+  thread_->join();
+}
+
+void
+Worker::scheduleJob(void* job)
+{
+  work_q_.push(job);
+}
+
+void
+Worker::thread_loop()
+{
+  bool done;
+
+  do {
+    done = processJob(work_q_.dequeue());
+  } while (done);
+}
+
+
+Worker::Worker(size_t q_depth)
+  : work_q_(q_depth)
+{
+}
+
+Worker::~Worker()
+{
+  delete thread_;
 }

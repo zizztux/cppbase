@@ -1,5 +1,5 @@
-#ifndef __TYPEDEFS_H__
-#define __TYPEDEFS_H__
+#ifndef __WORKER_HPP__
+#define __WORKER_HPP__
 
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
@@ -31,8 +31,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cassert>
-#include <cstddef>
-#include <cstdint>
+#include <thread>
+
+#include <BlockingQueue.hpp>
+
+
+class Worker
+{
+public:
+  std::thread::id start();
+  void finalize();
+
+  void scheduleJob(void* job);
+  virtual bool processJob(void* job) = 0;
+
+private:
+  void thread_loop();
+
+public:
+  Worker() = default;
+  Worker(size_t q_depth);
+  virtual ~Worker();
+
+private:
+  BlockingQueue<void*> work_q_;
+  std::thread* thread_ = nullptr;
+};
 
 #endif

@@ -1,15 +1,14 @@
 *.a
 *.d
-*.dis
 *.o
 *.so
 *.so.*
-*.sym
 config.h
 config.h.in~
 config.log
 config.status
-cppbase
 Makefile
 
 autom4te.cache/
+obj/
+out/

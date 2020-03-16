@@ -106,9 +106,7 @@ install-lib: $(OUTPUT)
 	$(LN_S) -f $(notdir $<) $(patsubst %.$(MAJOR).$(MINOR).$(PATCH),$(INSTALL_DIR)/lib/%,$(notdir $<))
 
 test: $(OUTPUT)
-	@for dir in $(wildcard $(TEST_DIR)/*); do \
-		$(MAKE) -C $$dir; \
-	done
+	@$(MAKE) -C $(TEST_DIR)
 
 ctags:
 	ctags `find $(TOP_DIR)/ \( -name '*.[chsS]' -o -name '*.hpp' -o -name '*.cc' -o -name '*.cpp' \) -print`
@@ -118,10 +116,8 @@ cscope:
 	cscope -b -q -k
 
 clean:
-	@for dir in $(wildcard $(TEST_DIR)/*); do \
-		$(MAKE) -C $$dir clean; \
-	done
-	\rm -rf $(OUTPUT_DIR)
+	\rm -rf $(OUTPUT_DIR) ./out
+	@$(MAKE) -C $(TEST_DIR) clean
 
 distclean: clean
 	\rm -f Makefile

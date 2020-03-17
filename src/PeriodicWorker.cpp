@@ -28,50 +28,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <iostream>
-
-#include <GenericWorker.hpp>
+#include <cppbase.hpp>
 #include <PeriodicWorker.hpp>
 
 
-class PreProcessor : public GenericWorker
+void
+PeriodicWorker::thread_loop()
 {
-private:
-  virtual bool processJob(void* job) { std::cout << "Job: " << job << std::endl; return job != 0; }
+  std::chrono::steady_clock::time_point next = std::chrono::steady_clock::now();
 
-public:
-  PreProcessor() = default;
-  virtual ~PreProcessor() { }
-};
+  while (processJob()) {
+    next += period_;
+    std::this_thread::sleep_until(next);
+  }
+}
 
-class PeriodicCall : public PeriodicWorker
+
+PeriodicWorker::PeriodicWorker(const std::chrono::milliseconds& period)
+  : period_(std::chrono::microseconds(period))
 {
-private:
-  virtual bool processJob() { std::cout << __FUNCTION__ << std::endl; return true; }
+}
 
-public:
-  PeriodicCall() = default;
-  PeriodicCall(unsigned int freq) : PeriodicWorker(freq) { }
-  virtual ~PeriodicCall() { }
-};
-
-
-int
-main(int argc, char *argv[])
+PeriodicWorker::PeriodicWorker(unsigned int freq)
+  : period_(std::chrono::microseconds(1s) / freq)
 {
-  PreProcessor worker;
-  worker.start();
+}
 
-  worker.scheduleJob((void*)5);
-  worker.scheduleJob((void*)2);
-  worker.scheduleJob((void*)9);
-  worker.scheduleJob((void*)0);
-
-  worker.finalize();
-
-  PeriodicCall periodic;
-  periodic.start();
-  periodic.finalize();
-
-  return 0;
+PeriodicWorker::~PeriodicWorker()
+{
 }

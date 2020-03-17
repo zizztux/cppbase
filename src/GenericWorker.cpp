@@ -28,50 +28,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <iostream>
-
+#include <cppbase.hpp>
 #include <GenericWorker.hpp>
-#include <PeriodicWorker.hpp>
 
 
-class PreProcessor : public GenericWorker
+void
+GenericWorker::scheduleJob(void* job)
 {
-private:
-  virtual bool processJob(void* job) { std::cout << "Job: " << job << std::endl; return job != 0; }
+  work_q_.push(job);
+}
 
-public:
-  PreProcessor() = default;
-  virtual ~PreProcessor() { }
-};
-
-class PeriodicCall : public PeriodicWorker
+void
+GenericWorker::thread_loop()
 {
-private:
-  virtual bool processJob() { std::cout << __FUNCTION__ << std::endl; return true; }
-
-public:
-  PeriodicCall() = default;
-  PeriodicCall(unsigned int freq) : PeriodicWorker(freq) { }
-  virtual ~PeriodicCall() { }
-};
+  while (processJob(work_q_.dequeue()));
+}
 
 
-int
-main(int argc, char *argv[])
+GenericWorker::GenericWorker(size_t q_depth)
+  : work_q_(q_depth)
 {
-  PreProcessor worker;
-  worker.start();
+}
 
-  worker.scheduleJob((void*)5);
-  worker.scheduleJob((void*)2);
-  worker.scheduleJob((void*)9);
-  worker.scheduleJob((void*)0);
-
-  worker.finalize();
-
-  PeriodicCall periodic;
-  periodic.start();
-  periodic.finalize();
-
-  return 0;
+GenericWorker::~GenericWorker()
+{
+  assert(work_q_.empty());
 }

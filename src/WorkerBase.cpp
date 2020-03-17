@@ -28,50 +28,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <iostream>
-
-#include <GenericWorker.hpp>
-#include <PeriodicWorker.hpp>
+#include <cppbase.hpp>
+#include <WorkerBase.hpp>
 
 
-class PreProcessor : public GenericWorker
+std::thread::id
+WorkerBase::start()
 {
-private:
-  virtual bool processJob(void* job) { std::cout << "Job: " << job << std::endl; return job != 0; }
+  thread_ = new std::thread(&WorkerBase::thread_loop, this);
+  return thread_->get_id();
+}
 
-public:
-  PreProcessor() = default;
-  virtual ~PreProcessor() { }
-};
-
-class PeriodicCall : public PeriodicWorker
+void
+WorkerBase::finalize()
 {
-private:
-  virtual bool processJob() { std::cout << __FUNCTION__ << std::endl; return true; }
-
-public:
-  PeriodicCall() = default;
-  PeriodicCall(unsigned int freq) : PeriodicWorker(freq) { }
-  virtual ~PeriodicCall() { }
-};
+  thread_->join();
+}
 
 
-int
-main(int argc, char *argv[])
+WorkerBase::~WorkerBase()
 {
-  PreProcessor worker;
-  worker.start();
-
-  worker.scheduleJob((void*)5);
-  worker.scheduleJob((void*)2);
-  worker.scheduleJob((void*)9);
-  worker.scheduleJob((void*)0);
-
-  worker.finalize();
-
-  PeriodicCall periodic;
-  periodic.start();
-  periodic.finalize();
-
-  return 0;
+  delete thread_;
 }

@@ -1,3 +1,6 @@
+#ifndef __WORKERBASE_HPP__
+#define __WORKERBASE_HPP__
+
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
  * All rights reserved.
@@ -28,45 +31,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <Worker.hpp>
+#include <thread>
 
 
-std::thread::id
-Worker::start()
+class WorkerBase
 {
-  thread_ = new std::thread(&Worker::thread_loop, this);
-  return thread_->get_id();
-}
+public:
+  std::thread::id start();
+  void finalize();
 
-void
-Worker::finalize()
-{
-  thread_->join();
-}
+private:
+  virtual void thread_loop() = 0;
 
-void
-Worker::scheduleJob(void* job)
-{
-  work_q_.push(job);
-}
+public:
+  WorkerBase() = default;
+  virtual ~WorkerBase();
 
-void
-Worker::thread_loop()
-{
-  bool done;
+private:
+  std::thread* thread_ = nullptr;
+};
 
-  do {
-    done = processJob(work_q_.dequeue());
-  } while (done);
-}
-
-
-Worker::Worker(size_t q_depth)
-  : work_q_(q_depth)
-{
-}
-
-Worker::~Worker()
-{
-  delete thread_;
-}
+#endif

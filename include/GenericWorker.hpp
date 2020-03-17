@@ -1,3 +1,6 @@
+#ifndef __GENERICWORKER_HPP__
+#define __GENERICWORKER_HPP__
+
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
  * All rights reserved.
@@ -28,50 +31,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <iostream>
-
-#include <GenericWorker.hpp>
-#include <PeriodicWorker.hpp>
+#include <BlockingQueue.hpp>
+#include <WorkerBase.hpp>
 
 
-class PreProcessor : public GenericWorker
+class GenericWorker : public WorkerBase
 {
+public:
+  void scheduleJob(void* job);
+
 private:
-  virtual bool processJob(void* job) { std::cout << "Job: " << job << std::endl; return job != 0; }
+  virtual void thread_loop() override;
+  virtual bool processJob(void* job) = 0;
 
 public:
-  PreProcessor() = default;
-  virtual ~PreProcessor() { }
-};
+  GenericWorker() = default;
+  GenericWorker(size_t q_depth);
+  virtual ~GenericWorker();
 
-class PeriodicCall : public PeriodicWorker
-{
 private:
-  virtual bool processJob() { std::cout << __FUNCTION__ << std::endl; return true; }
-
-public:
-  PeriodicCall() = default;
-  PeriodicCall(unsigned int freq) : PeriodicWorker(freq) { }
-  virtual ~PeriodicCall() { }
+  BlockingQueue<void*> work_q_;
 };
 
-
-int
-main(int argc, char *argv[])
-{
-  PreProcessor worker;
-  worker.start();
-
-  worker.scheduleJob((void*)5);
-  worker.scheduleJob((void*)2);
-  worker.scheduleJob((void*)9);
-  worker.scheduleJob((void*)0);
-
-  worker.finalize();
-
-  PeriodicCall periodic;
-  periodic.start();
-  periodic.finalize();
-
-  return 0;
-}
+#endif

@@ -29,6 +29,11 @@
 #
 
 #
+# External dependencies
+#
+LIBCPPBASE_DIR := /home/zizztux/workspace/library/libcppbase/build/out
+
+#
 # Directories and files
 #
 HDRS := $(wildcard *.h *.hpp)
@@ -37,17 +42,14 @@ SRCS := $(wildcard *.c *.cc *.cpp)
 #
 # Build options
 #
-CPPFLAGS := -I../../include
-CFLAGS := -Wall -O2
+CPPFLAGS := -I$(LIBCPPBASE_DIR)/include
 CXXFLAGS := -std=c++1z -Wall -O2
-LDFLAGS := -lcppbase -L../../build/obj
+LDFLAGS := -lcppbase -L$(LIBCPPBASE_DIR)/lib
 ifeq ($(DEBUG),0)
 CPPFLAGS += -DNDEBUG
-CFLAGS +=
 CXXFLAGS +=
 else
 CPPFLAGS +=
-CFLAGS += -g
 CXXFLAGS += -g
 endif
 

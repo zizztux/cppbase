@@ -40,7 +40,7 @@ template <typename T>
 class BlockingQueue
 {
 public:
-  bool empty() const;
+  bool empty();
   T front();
   void push(T& item);
   T dequeue();
@@ -63,7 +63,7 @@ private:
 
 
 template <typename T>
-bool BlockingQueue<T>::empty() const
+bool BlockingQueue<T>::empty()
 {
   const std::lock_guard<std::mutex> lock(mutex_);
 

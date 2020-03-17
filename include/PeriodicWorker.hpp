@@ -1,5 +1,5 @@
-#ifndef __WORKER_HPP__
-#define __WORKER_HPP__
+#ifndef __PERIODICWORKER_HPP__
+#define __PERIODICWORKER_HPP__
 
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
@@ -31,31 +31,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <thread>
+#include <chrono>
 
-#include <BlockingQueue.hpp>
+#include <WorkerBase.hpp>
+
+using namespace std::chrono_literals;
 
 
-class Worker
+class PeriodicWorker : public WorkerBase
 {
-public:
-  std::thread::id start();
-  void finalize();
-
-  void scheduleJob(void* job);
-  virtual bool processJob(void* job) = 0;
-
 private:
-  void thread_loop();
+  virtual void thread_loop() override;
+  virtual bool processJob() = 0;
 
 public:
-  Worker() = default;
-  Worker(size_t q_depth);
-  virtual ~Worker();
+  PeriodicWorker() = default;
+  PeriodicWorker(const std::chrono::milliseconds& period);
+  PeriodicWorker(unsigned int freq);
+  virtual ~PeriodicWorker();
 
 private:
-  BlockingQueue<void*> work_q_;
-  std::thread* thread_ = nullptr;
+  std::chrono::microseconds period_ = std::chrono::microseconds(1s) / 30;
 };
 
 #endif

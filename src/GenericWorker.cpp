@@ -30,10 +30,11 @@
 
 #include <cppbase.hpp>
 #include <GenericWorker.hpp>
+#include <JobBase.hpp>
 
 
 void
-GenericWorker::scheduleJob(void* job)
+GenericWorker::scheduleJob(struct JobBase* job)
 {
   work_q_.push(job);
 }

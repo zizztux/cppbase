@@ -1,5 +1,5 @@
-#ifndef __GENERICWORKER_HPP__
-#define __GENERICWORKER_HPP__
+#ifndef __JOBBASE_HPP__
+#define __JOBBASE_HPP__
 
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
@@ -31,28 +31,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <BlockingQueue.hpp>
-#include <WorkerBase.hpp>
-
-struct JobBase;
-
-
-class GenericWorker : public WorkerBase
+struct JobBase
 {
-public:
-  void scheduleJob(struct JobBase* job);
-
-private:
-  virtual void thread_loop() override;
-  virtual bool processJob(struct JobBase* job) = 0;
-
-public:
-  GenericWorker() = default;
-  GenericWorker(size_t q_depth);
-  virtual ~GenericWorker();
-
-private:
-  BlockingQueue<JobBase*> work_q_;
+  int id_;
 };
 
 #endif

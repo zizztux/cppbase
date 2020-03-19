@@ -34,6 +34,9 @@ MAJOR := $(word 1,$(subst ., ,$(VERSION)))
 MINOR := $(word 2,$(subst ., ,$(VERSION)))
 PATCH := $(word 3,$(subst ., ,$(VERSION)))
 
+VERSION_STR := $(VERSION)-$(shell git rev-parse --short HEAD 2> /dev/null || echo "release")
+BUILD_STR := $(shell whoami)@$(shell hostname -f)
+
 #
 # Toolchain
 #
@@ -67,11 +70,11 @@ OBJS += $(patsubst $(SRC_DIR)/%.cpp,$(OUTPUT_DIR)/%.o,$(filter %.cpp,$(SRCS)))
 #
 # Build options
 #
-CPPFLAGS := -I$(shell pwd)/$(HDR_DIR) -DVERSION=\"$(VERSION)\" @CPPFLAGS@
+CPPFLAGS := -I$(shell pwd)/$(HDR_DIR) -DVERSION=\"$(VERSION_STR)\" -DBUILD=\"$(BUILD_STR)\" @CPPFLAGS@
 CFLAGS := -fPIC -Wall -O2 @CFLAGS@
 CXXFLAGS := -std=c++1z -fPIC -Wall -O2 @CXXFLAGS@
 LDFLAGS := -lpthread -lstdc++fs @LDFLAGS@
-ifeq ($(DEBUG),0)
+ifneq ($(DEBUG),0)
 CPPFLAGS += -DNDEBUG
 CFLAGS +=
 CXXFLAGS +=
@@ -93,7 +96,9 @@ $(OUTPUT): $(OBJS)
 	$(LDCONFIG) -n $(dir $(OUTPUT)) &> /dev/null
 	$(LN_S) -f $(notdir $@) $(patsubst %.$(MAJOR).$(MINOR).$(PATCH),%,$@)
 
+ifeq (,$(filter $(MAKECMDGOALS),clean distclean))
 include $(TOP_DIR)/build/rules.mk
+endif
 
 install: install-lib install-hdr
 

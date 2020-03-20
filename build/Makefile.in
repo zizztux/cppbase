@@ -94,7 +94,7 @@ all: $(OUTPUT)
 $(OUTPUT): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -shared -Wl,-soname,$(patsubst %.$(MINOR).$(PATCH),%,$(notdir $@)) -o $@ $^ $(LDFLAGS)
 	$(LDCONFIG) -n $(dir $(OUTPUT)) &> /dev/null
-	$(LN_S) -f $(notdir $@) $(patsubst %.$(MAJOR).$(MINOR).$(PATCH),%,$@)
+	$(LN_S) -f $(patsubst %.$(MINOR).$(PATCH),%,$(notdir $@)) $(patsubst %.$(MAJOR).$(MINOR).$(PATCH),%,$@)
 
 ifeq (,$(filter $(MAKECMDGOALS),clean distclean))
 include $(TOP_DIR)/build/rules.mk
@@ -108,7 +108,7 @@ install-hdr: $(HDRS)
 install-lib: $(OUTPUT)
 	$(INSTALL) -D -m 0644 -s -t $(INSTALL_DIR)/lib $^
 	$(LDCONFIG) -n $(INSTALL_DIR)/lib &> /dev/null
-	$(LN_S) -f $(notdir $<) $(patsubst %.$(MAJOR).$(MINOR).$(PATCH),$(INSTALL_DIR)/lib/%,$(notdir $<))
+	$(LN_S) -f $(patsubst %.$(MINOR).$(PATCH),%,$(notdir $<)) $(patsubst %.$(MAJOR).$(MINOR).$(PATCH),$(INSTALL_DIR)/lib/%,$(notdir $<))
 
 test: $(OUTPUT)
 	@$(MAKE) -C $(TEST_DIR)

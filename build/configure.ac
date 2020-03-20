@@ -32,7 +32,7 @@
 # Package information
 #
 AC_INIT([C++ Base Library],
-	[0.0.1],
+	[0.1.0],
 	[zizztux@gmail.com],
 	[libcppbase],
 	[https://github.com/zizztux/libcppbase])

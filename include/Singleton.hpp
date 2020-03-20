@@ -34,6 +34,8 @@
 #include <utility>
 
 
+namespace cppbase {
+
 template <typename T>
 class Singleton
 {
@@ -49,5 +51,7 @@ public:
     return instance;
   }
 };
+
+}
 
 #endif

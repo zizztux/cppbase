@@ -32,6 +32,8 @@
 #include <PeriodicWorker.hpp>
 
 
+namespace cppbase {
+
 void
 PeriodicWorker::thread_loop()
 {
@@ -56,4 +58,6 @@ PeriodicWorker::PeriodicWorker(unsigned int freq)
 
 PeriodicWorker::~PeriodicWorker()
 {
+}
+
 }

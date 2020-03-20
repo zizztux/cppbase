@@ -36,6 +36,8 @@
 #include <queue>
 
 
+namespace cppbase {
+
 template <typename T, typename U>
 class AsyncPrioQueue
 {
@@ -137,6 +139,8 @@ AsyncPrioQueue<T, U>::AsyncPrioQueue(size_t capacity, U compare)
 template <typename T, typename U>
 AsyncPrioQueue<T, U>::~AsyncPrioQueue()
 {
+}
+
 }
 
 #endif

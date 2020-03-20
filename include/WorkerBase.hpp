@@ -34,11 +34,15 @@
 #include <thread>
 
 
+namespace cppbase {
+
 class WorkerBase
 {
 public:
-  std::thread::id start();
+  bool initialize();
   void finalize();
+
+  std::thread::id id() const { return thread_->get_id(); }
 
 private:
   virtual void thread_loop() = 0;
@@ -50,5 +54,7 @@ public:
 private:
   std::thread* thread_ = nullptr;
 };
+
+}
 
 #endif

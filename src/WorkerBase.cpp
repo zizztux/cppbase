@@ -32,21 +32,28 @@
 #include <WorkerBase.hpp>
 
 
-std::thread::id
-WorkerBase::start()
+namespace cppbase {
+
+bool
+WorkerBase::initialize()
 {
   thread_ = new std::thread(&WorkerBase::thread_loop, this);
-  return thread_->get_id();
+
+  return true;
 }
 
 void
 WorkerBase::finalize()
 {
   thread_->join();
+
+  delete thread_;
+  thread_ = nullptr;
 }
 
 
 WorkerBase::~WorkerBase()
 {
-  delete thread_;
+}
+
 }

@@ -33,16 +33,20 @@
 #include <JobBase.hpp>
 
 
-void
-GenericWorker::scheduleJob(struct JobBase* job)
-{
-  work_q_.push(job);
-}
+namespace cppbase {
 
 void
 GenericWorker::thread_loop()
 {
-  while (processJob(work_q_.dequeue()));
+  while (1) {
+    JobBase* job = work_q_.dequeue();
+
+    bool next = processJob(job);
+    delete job;
+
+    if (!next)
+      break;
+  }
 }
 
 
@@ -54,4 +58,6 @@ GenericWorker::GenericWorker(size_t q_depth)
 GenericWorker::~GenericWorker()
 {
   assert(work_q_.empty());
+}
+
 }

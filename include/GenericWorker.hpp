@@ -34,17 +34,19 @@
 #include <BlockingQueue.hpp>
 #include <WorkerBase.hpp>
 
-struct JobBase;
 
+namespace cppbase {
+
+struct JobBase;
 
 class GenericWorker : public WorkerBase
 {
 public:
-  void scheduleJob(struct JobBase* job);
+  void scheduleJob(JobBase* job) { work_q_.push(job); }
 
 private:
   virtual void thread_loop() override;
-  virtual bool processJob(struct JobBase* job) = 0;
+  virtual bool processJob(JobBase* job) = 0;
 
 public:
   GenericWorker() = default;
@@ -54,5 +56,7 @@ public:
 private:
   BlockingQueue<JobBase*> work_q_;
 };
+
+}
 
 #endif

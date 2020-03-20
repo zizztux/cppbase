@@ -31,9 +31,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+namespace cppbase {
+
 struct JobBase
 {
   int id_;
 };
+
+}
 
 #endif

@@ -36,6 +36,8 @@
 #include <queue>
 
 
+namespace cppbase {
+
 template <typename T>
 class BlockingQueue
 {
@@ -53,7 +55,7 @@ public:
   virtual ~BlockingQueue();
 
 private:
-  size_t capacity_ = 5;
+  size_t capacity_ = 1;
 
   std::queue<T> queue_;
   std::mutex mutex_;
@@ -135,6 +137,8 @@ BlockingQueue<T>::BlockingQueue(size_t capacity)
 template <typename T>
 BlockingQueue<T>::~BlockingQueue()
 {
+}
+
 }
 
 #endif

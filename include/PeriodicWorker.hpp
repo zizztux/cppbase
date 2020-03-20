@@ -38,8 +38,14 @@
 using namespace std::chrono_literals;
 
 
+namespace cppbase {
+
 class PeriodicWorker : public WorkerBase
 {
+public:
+  void setPeriod(const std::chrono::milliseconds& period) { period_ = period; }
+  void setFrequency(unsigned int freq) { period_ = std::chrono::microseconds(1s) / freq; }
+
 private:
   virtual void thread_loop() override;
   virtual bool processJob() = 0;
@@ -53,5 +59,7 @@ public:
 private:
   std::chrono::microseconds period_ = std::chrono::microseconds(1s) / 30;
 };
+
+}
 
 #endif

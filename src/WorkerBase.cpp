@@ -38,6 +38,8 @@ bool
 WorkerBase::initialize()
 {
   thread_ = new std::thread(&WorkerBase::thread_loop, this);
+  if (!thread_)
+    return false;
 
   return true;
 }
@@ -49,11 +51,6 @@ WorkerBase::finalize()
 
   delete thread_;
   thread_ = nullptr;
-}
-
-
-WorkerBase::~WorkerBase()
-{
 }
 
 }

@@ -31,6 +31,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <string>
 #include <thread>
 
 
@@ -43,15 +44,20 @@ public:
   void finalize();
 
   std::thread::id id() const { return thread_->get_id(); }
+  const std::string& name() const { return name_; }
+  void setName(const std::string& name) { name_ = name; }
 
 private:
   virtual void thread_loop() = 0;
 
 public:
   WorkerBase() = default;
-  virtual ~WorkerBase();
+  WorkerBase(const std::string& name) : name_(name) { }
+  virtual ~WorkerBase() { }
 
 private:
+  std::string name_;
+
   std::thread* thread_ = nullptr;
 };
 

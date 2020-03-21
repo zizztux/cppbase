@@ -40,10 +40,10 @@ class WorkerHandler
 public:
   virtual bool onWorkerHandle(JobBase* job) = 0;
 
-public:
+public:     // constructor and destructor
   virtual ~WorkerHandler() { }
 };
 
-}
+} // namespace cppbase
 
 #endif

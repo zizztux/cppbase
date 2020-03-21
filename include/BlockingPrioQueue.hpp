@@ -48,7 +48,7 @@ public:
   void pop();
   bool empty();
 
-public:
+public:     // constructor and destructor
   AsyncPrioQueue(U compare);
   AsyncPrioQueue(size_t capacity, U compare);
   virtual ~AsyncPrioQueue();
@@ -141,6 +141,6 @@ AsyncPrioQueue<T, U>::~AsyncPrioQueue()
 {
 }
 
-}
+} // namespace cppbase
 
 #endif

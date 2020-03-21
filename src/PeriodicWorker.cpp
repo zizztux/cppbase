@@ -77,4 +77,4 @@ PeriodicWorker::~PeriodicWorker()
 {
 }
 
-}
+} // namespace cppbase

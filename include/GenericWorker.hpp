@@ -45,13 +45,13 @@ class GenericWorker : public WorkerBase
 public:
   void scheduleJob(JobBase* job) { work_q_.push(job); }
 
-public:
+public:     // overridings
   void registerHandler(WorkerHandler* handler) override { handler_ = handler; }
 
 private:
   virtual void thread_loop() override;
 
-public:
+public:     // constructor and destructor
   GenericWorker() = default;
   GenericWorker(const std::string& name);
   GenericWorker(size_t q_depth);
@@ -64,6 +64,6 @@ private:
   BlockingQueue<JobBase*> work_q_;
 };
 
-}
+} // namespace cppbase
 
 #endif

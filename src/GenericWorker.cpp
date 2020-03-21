@@ -65,4 +65,4 @@ GenericWorker::~GenericWorker()
   assert(work_q_.empty());
 }
 
-}
+} // namespace cppbase

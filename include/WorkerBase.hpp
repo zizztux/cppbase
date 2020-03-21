@@ -47,14 +47,14 @@ public:
 
   std::thread::id id() const { return thread_->get_id(); }
 
-public:
+public:     // overridings
   const std::string& name() const override { return name_; }
   void setName(const std::string& name) override { name_ = name; }
 
 private:
   virtual void thread_loop() = 0;
 
-public:
+public:     // constructor and destructor
   WorkerBase() = default;
   WorkerBase(const std::string& name);
   virtual ~WorkerBase();
@@ -65,6 +65,6 @@ private:
   std::thread* thread_ = nullptr;
 };
 
-}
+} // namespace cppbase
 
 #endif

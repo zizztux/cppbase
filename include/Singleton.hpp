@@ -39,7 +39,7 @@ namespace cppbase {
 template <typename T>
 class Singleton
 {
-private:
+private:    // constructor and destructor
   Singleton(const Singleton&) = delete;
   Singleton& operator=(const Singleton&) = delete;
 
@@ -52,6 +52,6 @@ public:
   }
 };
 
-}
+} // namespace cppbase
 
 #endif

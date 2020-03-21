@@ -49,7 +49,7 @@ public:
   void pop();
   size_t size() const;
 
-public:
+public:     // constructor and destructor
   BlockingQueue() = default;
   BlockingQueue(size_t capacity);
   virtual ~BlockingQueue();
@@ -139,6 +139,6 @@ BlockingQueue<T>::~BlockingQueue()
 {
 }
 
-}
+} // namespace cppbase
 
 #endif

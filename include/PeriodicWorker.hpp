@@ -48,13 +48,13 @@ public:
   void setPeriod(const std::chrono::milliseconds& period) { period_ = period; }
   void setFrequency(unsigned int freq) { period_ = std::chrono::microseconds(1s) / freq; }
 
-public:
+public:     // overridings
   void registerHandler(WorkerHandler* handler) override { handler_ = handler; }
 
 private:
   virtual void thread_loop() override;
 
-public:
+public:     // constructor and destructor
   PeriodicWorker() = default;
   PeriodicWorker(const std::string& name);
   PeriodicWorker(const std::chrono::milliseconds& period);
@@ -69,6 +69,6 @@ private:
   std::chrono::microseconds period_ = std::chrono::microseconds(1s) / 30;
 };
 
-}
+} // namespace cppbase
 
 #endif

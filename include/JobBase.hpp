@@ -38,6 +38,6 @@ struct JobBase
   int id_;
 };
 
-}
+} // namespace cppbase
 
 #endif

@@ -46,10 +46,10 @@ public:
 
   virtual void registerHandler(WorkerHandler* handler) = 0;
 
-public:
+public:     // constructor and destructor
   virtual ~Worker() { }
 };
 
-}
+} // namespace cppbase
 
 #endif

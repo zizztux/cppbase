@@ -66,4 +66,4 @@ WorkerBase::~WorkerBase()
   assert(!thread_);
 }
 
-}
+} // namespace cppbase

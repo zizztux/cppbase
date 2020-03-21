@@ -53,4 +53,15 @@ WorkerBase::finalize()
   thread_ = nullptr;
 }
 
+
+WorkerBase::WorkerBase(const std::string& name)
+  : name_(name)
+{
+}
+
+WorkerBase::~WorkerBase()
+{
+  assert(!thread_);
+}
+
 }

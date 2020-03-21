@@ -31,6 +31,7 @@
 #include <cppbase.hpp>
 #include <GenericWorker.hpp>
 #include <JobBase.hpp>
+#include <WorkerHandler.hpp>
 
 
 namespace cppbase {
@@ -38,20 +39,22 @@ namespace cppbase {
 void
 GenericWorker::thread_loop()
 {
-  while (1) {
-    JobBase* job = work_q_.dequeue();
-
-    bool next = processJob(job);
-    delete job;
-
-    if (!next)
-      break;
-  }
+  while (handler_->processJob(work_q_.dequeue()));
 }
 
 
+GenericWorker::GenericWorker(const std::string& name)
+  : WorkerBase(name)
+{
+}
+
 GenericWorker::GenericWorker(size_t q_depth)
   : work_q_(q_depth)
+{
+}
+
+GenericWorker::GenericWorker(const std::string& name, size_t q_depth)
+  : WorkerBase(name), work_q_(q_depth)
 {
 }
 

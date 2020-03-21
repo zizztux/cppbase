@@ -40,23 +40,31 @@ using namespace std::chrono_literals;
 
 namespace cppbase {
 
+class WorkerHandler;
+
 class PeriodicWorker : public WorkerBase
 {
 public:
   void setPeriod(const std::chrono::milliseconds& period) { period_ = period; }
   void setFrequency(unsigned int freq) { period_ = std::chrono::microseconds(1s) / freq; }
 
+  void registerHandler(WorkerHandler* handler) { handler_ = handler; }
+
 private:
   virtual void thread_loop() override;
-  virtual bool processJob() = 0;
 
 public:
   PeriodicWorker() = default;
+  PeriodicWorker(const std::string& name);
   PeriodicWorker(const std::chrono::milliseconds& period);
   PeriodicWorker(unsigned int freq);
+  PeriodicWorker(const std::string& name, const std::chrono::milliseconds& period);
+  PeriodicWorker(const std::string& name, unsigned int freq);
   virtual ~PeriodicWorker();
 
 private:
+  WorkerHandler* handler_ = nullptr;
+
   std::chrono::microseconds period_ = std::chrono::microseconds(1s) / 30;
 };
 

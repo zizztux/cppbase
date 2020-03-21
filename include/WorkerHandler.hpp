@@ -1,5 +1,5 @@
-#ifndef __GENERICWORKER_HPP__
-#define __GENERICWORKER_HPP__
+#ifndef __WORKERHANDLER_HPP__
+#define __WORKERHANDLER_HPP__
 
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
@@ -31,36 +31,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <BlockingQueue.hpp>
-#include <WorkerBase.hpp>
-
-
 namespace cppbase {
 
 struct JobBase;
-class WorkerHandler;
 
-class GenericWorker : public WorkerBase
+class WorkerHandler
 {
 public:
-  void scheduleJob(JobBase* job) { work_q_.push(job); }
-
-  void registerHandler(WorkerHandler* handler) { handler_ = handler; }
-
-private:
-  virtual void thread_loop() override;
+  virtual bool processJob(JobBase* job) = 0;
 
 public:
-  GenericWorker() = default;
-  GenericWorker(const std::string& name);
-  GenericWorker(size_t q_depth);
-  GenericWorker(const std::string& name, size_t q_depth);
-  virtual ~GenericWorker();
-
-private:
-  WorkerHandler* handler_ = nullptr;
-
-  BlockingQueue<JobBase*> work_q_;
+  virtual ~WorkerHandler() { }
 };
 
 }

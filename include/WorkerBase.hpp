@@ -52,8 +52,8 @@ private:
 
 public:
   WorkerBase() = default;
-  WorkerBase(const std::string& name) : name_(name) { }
-  virtual ~WorkerBase() { }
+  WorkerBase(const std::string& name);
+  virtual ~WorkerBase();
 
 private:
   std::string name_;

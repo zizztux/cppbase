@@ -48,7 +48,8 @@ public:
   void setPeriod(const std::chrono::milliseconds& period) { period_ = period; }
   void setFrequency(unsigned int freq) { period_ = std::chrono::microseconds(1s) / freq; }
 
-  void registerHandler(WorkerHandler* handler) { handler_ = handler; }
+public:
+  void registerHandler(WorkerHandler* handler) override { handler_ = handler; }
 
 private:
   virtual void thread_loop() override;

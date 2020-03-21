@@ -34,18 +34,22 @@
 #include <string>
 #include <thread>
 
+#include <Worker.hpp>
+
 
 namespace cppbase {
 
-class WorkerBase
+class WorkerBase : public Worker
 {
 public:
   bool initialize();
   void finalize();
 
   std::thread::id id() const { return thread_->get_id(); }
-  const std::string& name() const { return name_; }
-  void setName(const std::string& name) { name_ = name; }
+
+public:
+  const std::string& name() const override { return name_; }
+  void setName(const std::string& name) override { name_ = name; }
 
 private:
   virtual void thread_loop() = 0;

@@ -1,3 +1,6 @@
+#ifndef __WORKER_HPP__
+#define __WORKER_HPP__
+
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
  * All rights reserved.
@@ -30,51 +33,23 @@
 
 #include <string>
 
-#include <PeriodicWorker.hpp>
-#include <WorkerHandler.hpp>
-
 
 namespace cppbase {
 
-void
-PeriodicWorker::thread_loop()
+class WorkerHandler;
+
+class Worker
 {
-  std::chrono::steady_clock::time_point next = std::chrono::steady_clock::now();
+public:
+  virtual const std::string& name() const = 0;
+  virtual void setName(const std::string& name) = 0;
 
-  while (handler_->onWorkerHandle(nullptr)) {
-    next += period_;
-    std::this_thread::sleep_until(next);
-  }
-}
+  virtual void registerHandler(WorkerHandler* handler) = 0;
 
-
-PeriodicWorker::PeriodicWorker(const std::string& name)
-  : WorkerBase(name)
-{
-}
-
-PeriodicWorker::PeriodicWorker(const std::chrono::milliseconds& period)
-  : period_(std::chrono::microseconds(period))
-{
-}
-
-PeriodicWorker::PeriodicWorker(unsigned int freq)
-  : period_(std::chrono::microseconds(1s) / freq)
-{
-}
-
-PeriodicWorker::PeriodicWorker(const std::string& name, const std::chrono::milliseconds& period)
-  : WorkerBase(name), period_(std::chrono::microseconds(period))
-{
-}
-
-PeriodicWorker::PeriodicWorker(const std::string& name, unsigned int freq)
-  : WorkerBase(name), period_(std::chrono::microseconds(1s) / freq)
-{
-}
-
-PeriodicWorker::~PeriodicWorker()
-{
-}
+public:
+  virtual ~Worker() { }
+};
 
 }
+
+#endif

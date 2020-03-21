@@ -28,7 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cppbase.hpp>
+#include <cassert>
+#include <string>
+
 #include <GenericWorker.hpp>
 #include <JobBase.hpp>
 #include <WorkerHandler.hpp>
@@ -39,7 +41,7 @@ namespace cppbase {
 void
 GenericWorker::thread_loop()
 {
-  while (handler_->processJob(work_q_.dequeue()));
+  while (handler_->onWorkerHandle(work_q_.dequeue()));
 }
 
 

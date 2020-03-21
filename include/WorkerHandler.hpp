@@ -38,7 +38,7 @@ struct JobBase;
 class WorkerHandler
 {
 public:
-  virtual bool processJob(JobBase* job) = 0;
+  virtual bool onWorkerHandle(JobBase* job) = 0;
 
 public:
   virtual ~WorkerHandler() { }

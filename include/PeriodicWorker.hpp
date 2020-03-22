@@ -32,6 +32,7 @@
  */
 
 #include <chrono>
+#include <string>
 
 #include <WorkerBase.hpp>
 

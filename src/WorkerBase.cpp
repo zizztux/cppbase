@@ -49,10 +49,12 @@ WorkerBase::initialize()
 void
 WorkerBase::finalize()
 {
-  thread_->join();
+  if (thread_) {
+    thread_->join();
 
-  delete thread_;
-  thread_ = nullptr;
+    delete thread_;
+    thread_ = nullptr;
+  }
 }
 
 

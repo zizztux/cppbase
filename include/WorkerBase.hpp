@@ -42,8 +42,8 @@ namespace cppbase {
 class WorkerBase : public Worker
 {
 public:
-  bool initialize();
-  void finalize();
+  virtual bool initialize();
+  virtual void finalize();
 
   std::thread::id id() const { return thread_->get_id(); }
 

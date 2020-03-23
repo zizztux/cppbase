@@ -31,11 +31,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <cstdint>
+
+
 namespace cppbase {
 
 struct JobBase
 {
-  int id_;
+  uint64_t id_;
 };
 
 } // namespace cppbase

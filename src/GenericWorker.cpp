@@ -38,6 +38,15 @@
 
 namespace cppbase {
 
+JobBase*
+GenericWorker::dropJob()
+{
+  if (work_q_.empty())
+    return nullptr;
+
+  return work_q_.dequeue();
+}
+
 void
 GenericWorker::thread_loop()
 {

@@ -46,6 +46,7 @@ class GenericWorker : public WorkerBase
 {
 public:
   void scheduleJob(JobBase* job) { work_q_.push(job); }
+  JobBase* dropJob();
 
 public:     // overridings
   void registerHandler(WorkerHandler* handler) override { handler_ = handler; }

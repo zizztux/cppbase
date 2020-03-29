@@ -29,6 +29,7 @@
  */
 
 #include <cassert>
+#include <memory>
 #include <string>
 
 #include <GenericWorker.hpp>
@@ -38,7 +39,7 @@
 
 namespace cppbase {
 
-JobBase*
+std::shared_ptr<JobBase>
 GenericWorker::dropJob()
 {
   if (work_q_.empty())

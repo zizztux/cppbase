@@ -41,15 +41,15 @@ BUILD_STR := $(shell whoami)@$(shell hostname -f)
 #
 # Toolchain
 #
-export CC := @CC@
-export CPP := @CPP@
-export CXX := @CXX@
+CROSS_COMPILE ?=
+export CC := $(CROSS_COMPILE)@CC@
+export CPP := $(CROSS_COMPILE)@CPP@
+export CXX := $(CROSS_COMPILE)@CXX@
 export INSTALL := @INSTALL@ -p
 export LDCONFIG := @LDCONFIG@
 export LN_S := @LN_S@
 export MKDIR_P := @MKDIR_P@
-export RANLIB := @RANLIB@
-export STRIP := @STRIP@
+export RANLIB := $(CROSS_COMPILE)@RANLIB@
 
 #
 # Directories and files
@@ -102,7 +102,7 @@ install-hdr: $(HDRS)
 	$(INSTALL) -D -m 0644 -t $(INSTALL_DIR)/include $^
 
 install-lib: $(OUTPUT)
-	$(INSTALL) -D -m 0644 -s -t $(INSTALL_DIR)/lib $^
+	$(INSTALL) -D -m 0644 -s --strip-program=$(CROSS_COMPILE)strip -t $(INSTALL_DIR)/lib $^
 	$(LDCONFIG) -n $(INSTALL_DIR)/lib &> /dev/null
 	$(LN_S) -f $(patsubst %.$(MINOR).$(PATCH),%,$(notdir $<)) $(patsubst %.$(MAJOR).$(MINOR).$(PATCH),$(INSTALL_DIR)/lib/%,$(notdir $<))
 

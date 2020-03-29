@@ -36,8 +36,9 @@
 
 namespace cppbase {
 
-struct JobBase
+class JobBase
 {
+public:
   uint64_t id_;
 };
 

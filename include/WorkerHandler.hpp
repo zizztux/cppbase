@@ -31,14 +31,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <memory>
+
+
 namespace cppbase {
 
-struct JobBase;
+class JobBase;
 
 class WorkerHandler
 {
 public:
-  virtual bool onWorkerHandle(JobBase* job) = 0;
+  virtual bool onWorkerHandle(std::shared_ptr<JobBase> job) = 0;
 
 public:     // constructor and destructor
   virtual ~WorkerHandler() { }

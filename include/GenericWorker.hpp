@@ -31,6 +31,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <memory>
 #include <string>
 
 #include <BlockingQueue.hpp>
@@ -39,14 +40,14 @@
 
 namespace cppbase {
 
-struct JobBase;
+class JobBase;
 class WorkerHandler;
 
 class GenericWorker : public WorkerBase
 {
 public:
-  void scheduleJob(JobBase* job) { work_q_.push(job); }
-  JobBase* dropJob();
+  void scheduleJob(std::shared_ptr<JobBase> job) { work_q_.push(job); }
+  std::shared_ptr<JobBase> dropJob();
 
 public:     // overridings
   void registerHandler(WorkerHandler* handler) override { handler_ = handler; }
@@ -64,7 +65,7 @@ public:     // constructor and destructor
 private:
   WorkerHandler* handler_ = nullptr;
 
-  BlockingQueue<JobBase*> work_q_;
+  BlockingQueue<std::shared_ptr<JobBase>> work_q_;
 };
 
 } // namespace cppbase

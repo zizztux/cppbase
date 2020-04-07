@@ -28,9 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cassert>
-#include <string>
-
 #include <WorkerBase.hpp>
 
 
@@ -55,17 +52,6 @@ WorkerBase::finalize()
     delete thread_;
     thread_ = nullptr;
   }
-}
-
-
-WorkerBase::WorkerBase(const std::string& name)
-  : name_(name)
-{
-}
-
-WorkerBase::~WorkerBase()
-{
-  assert(!thread_);
 }
 
 } // namespace cppbase

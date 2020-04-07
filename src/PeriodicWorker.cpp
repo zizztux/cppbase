@@ -28,9 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <chrono>
-#include <string>
-
 #include <PeriodicWorker.hpp>
 #include <WorkerHandler.hpp>
 
@@ -40,42 +37,14 @@ namespace cppbase {
 void
 PeriodicWorker::thread_loop()
 {
+  assert(handler());
+
   std::chrono::steady_clock::time_point next = std::chrono::steady_clock::now();
 
-  while (handler_->onWorkerHandle(nullptr)) {
+  while (handler()->onWorkerHandle(nullptr)) {
     next += period_;
     std::this_thread::sleep_until(next);
   }
-}
-
-
-PeriodicWorker::PeriodicWorker(const std::string& name)
-  : WorkerBase(name)
-{
-}
-
-PeriodicWorker::PeriodicWorker(const std::chrono::milliseconds& period)
-  : period_(std::chrono::microseconds(period))
-{
-}
-
-PeriodicWorker::PeriodicWorker(unsigned int freq)
-  : period_(std::chrono::microseconds(1s) / freq)
-{
-}
-
-PeriodicWorker::PeriodicWorker(const std::string& name, const std::chrono::milliseconds& period)
-  : WorkerBase(name), period_(std::chrono::microseconds(period))
-{
-}
-
-PeriodicWorker::PeriodicWorker(const std::string& name, unsigned int freq)
-  : WorkerBase(name), period_(std::chrono::microseconds(1s) / freq)
-{
-}
-
-PeriodicWorker::~PeriodicWorker()
-{
 }
 
 } // namespace cppbase

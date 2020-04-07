@@ -31,38 +31,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <cassert>
 #include <string>
 #include <thread>
-
-#include <Worker.hpp>
 
 
 namespace cppbase {
 
-class WorkerBase : public Worker
+class WorkerHandler;
+
+class WorkerBase
 {
 public:
   virtual bool initialize();
   virtual void finalize();
 
-  std::thread::id id() const { return thread_->get_id(); }
+  void registerHandler(WorkerHandler* handler) { handler_ = handler; }
 
-public:     // overridings
-  const std::string& name() const override { return name_; }
-  void setName(const std::string& name) override { name_ = name; }
+  std::thread::id id() const { return thread_->get_id(); }
+  const std::string& name() const { return name_; }
+  void setName(const std::string& name) { name_ = name; }
+
+protected:
+  WorkerHandler* handler() { return handler_; }
 
 private:
   virtual void thread_loop() = 0;
 
 public:     // constructor and destructor
   WorkerBase() = default;
-  WorkerBase(const std::string& name);
-  virtual ~WorkerBase();
+  WorkerBase(const std::string& name) : name_(name) { }
+  virtual ~WorkerBase() { assert(!thread_); }
 
 private:
   std::string name_;
 
   std::thread* thread_ = nullptr;
+  WorkerHandler* handler_ = nullptr;
 };
 
 } // namespace cppbase

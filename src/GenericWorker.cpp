@@ -28,10 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cassert>
-#include <memory>
-#include <string>
-
 #include <GenericWorker.hpp>
 #include <JobBase.hpp>
 #include <WorkerHandler.hpp>
@@ -51,28 +47,9 @@ GenericWorker::dropJob()
 void
 GenericWorker::thread_loop()
 {
-  while (handler_->onWorkerHandle(work_q_.dequeue()));
-}
+  assert(handler());
 
-
-GenericWorker::GenericWorker(const std::string& name)
-  : WorkerBase(name)
-{
-}
-
-GenericWorker::GenericWorker(size_t q_depth)
-  : work_q_(q_depth)
-{
-}
-
-GenericWorker::GenericWorker(const std::string& name, size_t q_depth)
-  : WorkerBase(name), work_q_(q_depth)
-{
-}
-
-GenericWorker::~GenericWorker()
-{
-  assert(work_q_.empty());
+  while (handler()->onWorkerHandle(work_q_.dequeue()));
 }
 
 } // namespace cppbase

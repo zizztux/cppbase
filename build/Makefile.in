@@ -62,7 +62,7 @@ OUTPUT_DIR := ./obj
 INSTALL_DIR := @prefix@
 
 OUTPUT := $(OUTPUT_DIR)/$(PROJECT).so.$(VERSION)
-HDRS += $(wildcard $(HDR_DIR)/*.hpp)
+HDRS += $(wildcard $(HDR_DIR)/*.h $(HDR_DIR)/*.hpp)
 SRCS += $(wildcard $(SRC_DIR)/*.c $(SRC_DIR)/*.cc $(SRC_DIR)/*.cpp)
 OBJS += $(patsubst $(SRC_DIR)/%.c,$(OUTPUT_DIR)/%.o,$(filter %.c,$(SRCS)))
 OBJS += $(patsubst $(SRC_DIR)/%.cc,$(OUTPUT_DIR)/%.o,$(filter %.cc,$(SRCS)))

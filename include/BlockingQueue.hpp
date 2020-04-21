@@ -39,7 +39,7 @@
 namespace cppbase {
 
 template <typename T>
-class BlockingQueue
+class BlockingQueue final
 {
 public:
   bool empty();
@@ -50,9 +50,9 @@ public:
   size_t size() const;
 
 public:     // constructor and destructor
-  BlockingQueue() = default;
-  BlockingQueue(size_t capacity);
-  virtual ~BlockingQueue();
+  explicit BlockingQueue() = default;
+  explicit BlockingQueue(size_t capacity);
+  ~BlockingQueue();
 
 private:
   size_t capacity_ = 1;

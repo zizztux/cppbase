@@ -31,7 +31,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cassert>
 #include <string>
 #include <thread>
 
@@ -59,9 +58,9 @@ private:
   virtual void thread_loop() = 0;
 
 public:     // constructor and destructor
-  WorkerBase() = default;
-  WorkerBase(const std::string& name) : name_(name) { }
-  virtual ~WorkerBase() { assert(!thread_); }
+  explicit WorkerBase() = default;
+  explicit WorkerBase(const std::string& name);
+  virtual ~WorkerBase();
 
 private:
   std::string name_;

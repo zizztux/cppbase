@@ -28,6 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <cassert>
+
 #include <GenericWorker.hpp>
 #include <JobBase.hpp>
 #include <WorkerHandler.hpp>
@@ -50,6 +52,23 @@ GenericWorker::thread_loop()
   assert(handler());
 
   while (handler()->onWorkerHandle(work_q_.dequeue()));
+}
+
+void
+GenericWorker::dispatchJob(std::shared_ptr<JobBase> job)
+{
+  work_q_.push(job);
+}
+
+
+GenericWorker::GenericWorker(size_t q_depth)
+  : work_q_(q_depth)
+{
+}
+
+GenericWorker::~GenericWorker()
+{
+  assert(work_q_.empty());
 }
 
 } // namespace cppbase

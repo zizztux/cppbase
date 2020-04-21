@@ -31,11 +31,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cassert>
 #include <memory>
-#include <string>
 
 #include <BlockingQueue.hpp>
+#include <JobChannel.hpp>
 #include <WorkerBase.hpp>
 
 
@@ -43,21 +42,21 @@ namespace cppbase {
 
 class JobBase;
 
-class GenericWorker : public WorkerBase
+class GenericWorker : public WorkerBase, public JobChannel
 {
 public:
-  void scheduleJob(std::shared_ptr<JobBase> job) { work_q_.push(job); }
   std::shared_ptr<JobBase> dropJob();
 
 private:    // overridings
   virtual void thread_loop() override;
+  virtual void dispatchJob(std::shared_ptr<JobBase> job) override;
 
 public:     // constructor and destructor
   using WorkerBase::WorkerBase;
 
-  GenericWorker() = default;
-  GenericWorker(size_t q_depth) : work_q_(q_depth) { }
-  virtual ~GenericWorker() { assert(work_q_.empty()); }
+  explicit GenericWorker() = default;
+  explicit GenericWorker(size_t q_depth);
+  virtual ~GenericWorker();
 
 private:
   BlockingQueue<std::shared_ptr<JobBase>> work_q_;

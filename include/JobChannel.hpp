@@ -1,5 +1,5 @@
-#ifndef __CPPBASE_HPP__
-#define __CPPBASE_HPP__
+#ifndef __JOBCHANNEL_HPP__
+#define __JOBCHANNEL_HPP__
 
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
@@ -31,8 +31,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cassert>
-#include <cstddef>
-#include <cstdint>
+#include <memory>
+
+
+namespace cppbase {
+
+class JobBase;
+
+class JobChannel
+{
+public:
+  virtual void dispatchJob(std::shared_ptr<JobBase> job) = 0;
+
+public:     // constructor and destructor
+  virtual ~JobChannel() { }
+};
+
+} // namespace cppbase
 
 #endif

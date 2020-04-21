@@ -53,10 +53,10 @@ private:    // overridings
 public:     // constructor and destructor
   using WorkerBase::WorkerBase;
 
-  PeriodicWorker() = default;
-  PeriodicWorker(const std::chrono::milliseconds& period) : period_(std::chrono::microseconds(period)) { }
-  PeriodicWorker(unsigned int freq) : period_(std::chrono::microseconds(1s) / freq) { }
-  virtual ~PeriodicWorker() { }
+  explicit PeriodicWorker() = default;
+  explicit PeriodicWorker(const std::chrono::milliseconds& period);
+  explicit PeriodicWorker(unsigned int freq);
+  virtual ~PeriodicWorker();
 
 private:
   std::chrono::microseconds period_ = std::chrono::microseconds(1s) / 30;

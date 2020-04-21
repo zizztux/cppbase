@@ -28,6 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <cassert>
+
 #include <PeriodicWorker.hpp>
 #include <WorkerHandler.hpp>
 
@@ -45,6 +47,21 @@ PeriodicWorker::thread_loop()
     next += period_;
     std::this_thread::sleep_until(next);
   }
+}
+
+
+PeriodicWorker::PeriodicWorker(const std::chrono::milliseconds& period)
+  : period_(std::chrono::microseconds(period))
+{
+}
+
+PeriodicWorker::PeriodicWorker(unsigned int freq)
+  : period_(std::chrono::microseconds(1s) / freq)
+{
+}
+
+PeriodicWorker::~PeriodicWorker()
+{
 }
 
 } // namespace cppbase

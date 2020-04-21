@@ -40,7 +40,7 @@ AC_INIT([C++ Base Library],
 #
 # Checks for system
 #
-AC_CONFIG_SRCDIR([../include/cppbase.hpp])
+AC_CONFIG_SRCDIR([../include/BlockingQueue.hpp])
 AC_CONFIG_AUX_DIR([scripts])
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST

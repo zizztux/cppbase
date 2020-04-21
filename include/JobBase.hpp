@@ -38,8 +38,12 @@ namespace cppbase {
 
 class JobBase
 {
+public:     // constructor and destructor
+  explicit JobBase() = default;
+  virtual ~JobBase() { }
+
 public:
-  uint64_t id_;
+  uint64_t id_ = 0;
 };
 
 } // namespace cppbase

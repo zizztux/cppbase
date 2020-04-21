@@ -28,6 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <cassert>
+
 #include <WorkerBase.hpp>
 
 
@@ -37,10 +39,8 @@ bool
 WorkerBase::initialize()
 {
   thread_ = new std::thread(&WorkerBase::thread_loop, this);
-  if (!thread_)
-    return false;
 
-  return true;
+  return static_cast<bool>(thread_);
 }
 
 void
@@ -52,6 +52,17 @@ WorkerBase::finalize()
     delete thread_;
     thread_ = nullptr;
   }
+}
+
+
+WorkerBase::WorkerBase(const std::string& name)
+  : name_(name)
+{
+}
+
+WorkerBase::~WorkerBase()
+{
+  assert(!thread_);
 }
 
 } // namespace cppbase

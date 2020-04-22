@@ -32,6 +32,7 @@
  */
 
 #include <condition_variable>
+#include <cstddef>
 #include <mutex>
 #include <queue>
 
@@ -50,7 +51,7 @@ public:
   size_t size() const;
 
 public:     // constructor and destructor
-  explicit BlockingQueue() = default;
+  explicit BlockingQueue();
   explicit BlockingQueue(size_t capacity);
   ~BlockingQueue();
 
@@ -76,9 +77,8 @@ template <typename T>
 T BlockingQueue<T>::front()
 {
   std::unique_lock<std::mutex> lock(mutex_);
-
-  while (queue_.empty())
-    pop_avail_.wait(lock);
+  pop_avail_.wait(lock,
+      [&queue_ = queue_]{ return !queue_.empty(); });
 
   return queue_.front();
 }
@@ -87,13 +87,11 @@ template <typename T>
 void BlockingQueue<T>::push(T& item)
 {
   std::unique_lock<std::mutex> lock(mutex_);
-
-  size_t size;
-  while ((size = queue_.size()) == capacity_)
-    push_avail_.wait(lock);
+  push_avail_.wait(lock,
+      [&queue_ = queue_, capacity_ = capacity_]{ return queue_.size() < capacity_; });
 
   queue_.push(item);
-  if (size == 0)
+  if (queue_.size() == 1)
     pop_avail_.notify_all();
 }
 
@@ -101,9 +99,8 @@ template <typename T>
 T BlockingQueue<T>::dequeue()
 {
   std::unique_lock<std::mutex> lock(mutex_);
-
-  while (queue_.empty())
-    pop_avail_.wait(lock);
+  pop_avail_.wait(lock,
+      [&queue_ = queue_]{ return !queue_.empty(); });
 
   T item = queue_.front();
   queue_.pop();
@@ -118,14 +115,19 @@ template <typename T>
 void BlockingQueue<T>::pop()
 {
   std::unique_lock<std::mutex> lock(mutex_);
-
-  while (queue_.empty())
-    pop_avail_.wait(lock);
+  pop_avail_.wait(lock,
+      [&queue_ = queue_]{ return !queue_.empty(); });
 
   queue_.pop();
 
   if (queue_.size() == capacity_ - 1)
     push_avail_.notify_all();
+}
+
+template <typename T>
+BlockingQueue<T>::BlockingQueue()
+  : BlockingQueue(1)
+{
 }
 
 template <typename T>

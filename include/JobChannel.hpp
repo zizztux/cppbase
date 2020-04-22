@@ -33,18 +33,25 @@
 
 #include <memory>
 
+#include <BlockingQueue.hpp>
+
 
 namespace cppbase {
 
 class JobBase;
 
-class JobChannel
+class JobChannel final
 {
 public:
-  virtual void dispatchJob(std::shared_ptr<JobBase> job) = 0;
+  void dispatchJob(std::shared_ptr<JobBase> job);
 
 public:     // constructor and destructor
-  virtual ~JobChannel() { }
+  explicit JobChannel() = delete;
+  explicit JobChannel(BlockingQueue<std::shared_ptr<JobBase>>& channel);
+  ~JobChannel();
+
+private:
+  BlockingQueue<std::shared_ptr<JobBase>>& channel_;
 };
 
 } // namespace cppbase

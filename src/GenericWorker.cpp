@@ -47,17 +47,17 @@ GenericWorker::dropJob()
 }
 
 void
+GenericWorker::dispatchJob(std::shared_ptr<JobBase> job)
+{
+  work_q_.push(job);
+}
+
+void
 GenericWorker::thread_loop()
 {
   assert(handler());
 
   while (handler()->onWorkerHandle(work_q_.dequeue()));
-}
-
-void
-GenericWorker::dispatchJob(std::shared_ptr<JobBase> job)
-{
-  work_q_.push(job);
 }
 
 

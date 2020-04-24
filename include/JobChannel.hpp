@@ -33,11 +33,11 @@
 
 #include <memory>
 
-#include <BlockingQueue.hpp>
-
 
 namespace cppbase {
 
+template <typename T>
+class BlockingQueue;
 class JobBase;
 
 class JobChannel final
@@ -47,11 +47,11 @@ public:
 
 public:     // constructor and destructor
   explicit JobChannel() = delete;
-  explicit JobChannel(BlockingQueue<std::shared_ptr<JobBase>>& channel);
+  explicit JobChannel(BlockingQueue<std::shared_ptr<JobBase>>* queue);
   ~JobChannel();
 
 private:
-  BlockingQueue<std::shared_ptr<JobBase>>& channel_;
+  BlockingQueue<std::shared_ptr<JobBase>>* queue_;
 };
 
 } // namespace cppbase

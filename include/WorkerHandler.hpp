@@ -32,6 +32,7 @@
  */
 
 #include <memory>
+#include <vector>
 
 
 namespace cppbase {
@@ -41,7 +42,7 @@ class JobBase;
 class WorkerHandler
 {
 public:
-  virtual bool onWorkerHandle(std::shared_ptr<JobBase> job) = 0;
+  virtual bool onWorkerHandle(const std::vector<std::shared_ptr<JobBase>>& job) = 0;
 
 public:     // constructor and destructor
   virtual ~WorkerHandler() { }

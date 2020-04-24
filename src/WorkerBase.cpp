@@ -29,6 +29,7 @@
  */
 
 #include <cassert>
+#include <thread>
 
 #include <WorkerBase.hpp>
 

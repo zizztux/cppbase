@@ -32,7 +32,10 @@
  */
 
 #include <string>
-#include <thread>
+
+namespace std {
+class thread;
+}
 
 
 namespace cppbase {
@@ -47,12 +50,8 @@ public:
 
   void registerHandler(WorkerHandler* handler) { handler_ = handler; }
 
-  std::thread::id id() const { return thread_->get_id(); }
   const std::string& name() const { return name_; }
   void setName(const std::string& name) { name_ = name; }
-
-protected:
-  WorkerHandler* handler() { return handler_; }
 
 private:
   virtual void thread_loop() = 0;
@@ -62,11 +61,13 @@ public:     // constructor and destructor
   explicit WorkerBase(const std::string& name);
   virtual ~WorkerBase();
 
+protected:
+  WorkerHandler* handler_ = nullptr;
+
 private:
   std::string name_;
 
   std::thread* thread_ = nullptr;
-  WorkerHandler* handler_ = nullptr;
 };
 
 } // namespace cppbase

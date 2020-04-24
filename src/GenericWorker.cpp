@@ -30,45 +30,82 @@
 
 #include <cassert>
 
+#include <BlockingQueue.hpp>
 #include <GenericWorker.hpp>
 #include <JobBase.hpp>
+#include <JobChannel.hpp>
 #include <WorkerHandler.hpp>
 
 
 namespace cppbase {
 
-std::shared_ptr<JobBase>
-GenericWorker::dropJob()
+JobChannel*
+GenericWorker::newChannel(size_t q_depth)
 {
-  if (work_q_.empty())
-    return nullptr;
+  BlockingQueue<std::shared_ptr<JobBase>>* q = new BlockingQueue<std::shared_ptr<JobBase>>(q_depth);
+  queues_.push_back(q);
 
-  return work_q_.dequeue();
+  JobChannel* c = new JobChannel(q);
+  channels_.push_back(c);
+
+  return c;
 }
 
-void
-GenericWorker::dispatchJob(std::shared_ptr<JobBase> job)
+JobChannel*
+GenericWorker::getChannel(unsigned int id)
 {
-  work_q_.push(job);
+  if (id >= channels_.size())
+    return nullptr;
+
+  return channels_[id];
 }
 
 void
 GenericWorker::thread_loop()
 {
-  assert(handler());
+  assert(handler_);
 
-  while (handler()->onWorkerHandle(work_q_.dequeue()));
+  bool next;
+  std::vector<std::shared_ptr<JobBase>> jobs;
+
+  do {
+    for (auto queue : queues_)
+      jobs.push_back(queue->dequeue());
+
+    next = handler_->onWorkerHandle(jobs);
+    jobs.clear();
+  } while (next);
 }
 
 
-GenericWorker::GenericWorker(size_t q_depth)
-  : work_q_(q_depth)
+GenericWorker::GenericWorker()
+  : GenericWorker(1)
 {
+}
+
+GenericWorker::GenericWorker(const std::string& name)
+  : GenericWorker(name, 1)
+{
+}
+
+GenericWorker::GenericWorker(size_t q_depth)
+{
+  newChannel(q_depth);
+}
+
+GenericWorker::GenericWorker(const std::string& name, size_t q_depth)
+  : WorkerBase(name)
+{
+  newChannel(q_depth);
 }
 
 GenericWorker::~GenericWorker()
 {
-  assert(work_q_.empty());
+  for (auto c : channels_)
+    delete c;
+
+  for (auto q : queues_)
+    delete q;
 }
 
 } // namespace cppbase

@@ -28,6 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <BlockingQueue.hpp>
 #include <JobChannel.hpp>
 
 
@@ -36,12 +37,12 @@ namespace cppbase {
 void
 JobChannel::dispatchJob(std::shared_ptr<JobBase> job)
 {
-  channel_.push(job);
+  queue_->push(job);
 }
 
 
-JobChannel::JobChannel(BlockingQueue<std::shared_ptr<JobBase>>& channel)
-  : channel_(channel)
+JobChannel::JobChannel(BlockingQueue<std::shared_ptr<JobBase>>* queue)
+  : queue_(queue)
 {
 }
 

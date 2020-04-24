@@ -33,36 +33,38 @@
 
 #include <cstddef>
 #include <memory>
+#include <vector>
 
-#include <BlockingQueue.hpp>
-#include <JobChannel.hpp>
 #include <WorkerBase.hpp>
 
 
 namespace cppbase {
 
+template <typename T>
+class BlockingQueue;
 class JobBase;
+class JobChannel;
 
-class GenericWorker : public WorkerBase, public JobChannel
+class GenericWorker : public WorkerBase
 {
 public:
-  std::shared_ptr<JobBase> dropJob();
-
-public:     // overridings
-  virtual void dispatchJob(std::shared_ptr<JobBase> job) override;
+  JobChannel* newChannel(size_t q_depth = 1);
+  JobChannel* getChannel(unsigned int id = 0);
+  size_t nchannels() const { return channels_.size(); }
 
 private:    // overridings
   virtual void thread_loop() override;
 
 public:     // constructor and destructor
-  using WorkerBase::WorkerBase;
-
-  explicit GenericWorker() = default;
+  explicit GenericWorker();
+  explicit GenericWorker(const std::string& name);
   explicit GenericWorker(size_t q_depth);
+  explicit GenericWorker(const std::string& name, size_t q_depth);
   virtual ~GenericWorker();
 
 private:
-  BlockingQueue<std::shared_ptr<JobBase>> work_q_;
+  std::vector<BlockingQueue<std::shared_ptr<JobBase>>*> queues_;
+  std::vector<JobChannel*> channels_;
 };
 
 } // namespace cppbase

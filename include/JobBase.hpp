@@ -44,6 +44,8 @@ public:     // constructor and destructor
 
 public:
   uint64_t id_ = 0;
+
+  std::shared_ptr<JobBase> next_ = nullptr;
 };
 
 } // namespace cppbase

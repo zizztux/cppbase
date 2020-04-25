@@ -43,14 +43,16 @@ namespace cppbase {
 template <typename T>
 class BlockingQueue;
 class JobBase;
-class JobChannel;
+
+using JobQueue = BlockingQueue<std::shared_ptr<JobBase>>;
 
 class GenericWorker : public WorkerBase
 {
 public:
-  JobChannel* newChannel(size_t q_depth = 1);
-  JobChannel* getChannel(unsigned int id = 0);
-  size_t nchannels() const { return channels_.size(); }
+  int newChannel(size_t q_depth = 1);
+  size_t nchannels() const { return queues_.size(); }
+
+  bool dispatchJob(std::shared_ptr<JobBase> job, int channel = 0);
 
 private:    // overridings
   virtual void thread_loop() override;
@@ -63,8 +65,7 @@ public:     // constructor and destructor
   virtual ~GenericWorker();
 
 private:
-  std::vector<BlockingQueue<std::shared_ptr<JobBase>>*> queues_;
-  std::vector<JobChannel*> channels_;
+  std::vector<JobQueue*> queues_;
 };
 
 } // namespace cppbase

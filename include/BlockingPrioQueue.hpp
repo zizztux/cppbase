@@ -32,6 +32,7 @@
  */
 
 #include <condition_variable>
+#include <cstddef>
 #include <mutex>
 #include <queue>
 
@@ -39,105 +40,104 @@
 namespace cppbase {
 
 template <typename T, typename U>
-class AsyncPrioQueue
+class BlockingPrioQueue final
 {
 public:
-  bool enqueue(T item);
-  T dequeue();
-  T top();
-  void pop();
   bool empty();
+  T front();
+  void push(T& item);
+  T dequeue();
+  void pop();
+  size_t size() const;
 
 public:     // constructor and destructor
-  AsyncPrioQueue(U compare);
-  AsyncPrioQueue(size_t capacity, U compare);
-  virtual ~AsyncPrioQueue();
+  explicit BlockingPrioQueue(U compare);
+  explicit BlockingPrioQueue(size_t capacity, U compare);
+  ~BlockingPrioQueue();
 
 private:
-  size_t _capacity;
+  size_t capacity_ = 1;
 
-  std::priority_queue<T, std::vector<T>, U> _queue;
-  std::mutex _mutex;
-  std::condition_variable _cond;
+  std::priority_queue<T, std::vector<T>, U> queue_;
+  std::mutex mutex_;
+  std::condition_variable push_avail_;
+  std::condition_variable pop_avail_;
 };
 
 
 template <typename T, typename U>
-bool AsyncPrioQueue<T, U>::enqueue(T item)
+bool BlockingPrioQueue<T, U>::empty()
 {
-  std::unique_lock<std::mutex> lock(_mutex);
+  const std::lock_guard<std::mutex> lock(mutex_);
 
-  size_t size = _queue.size();
-  assert(size <= _capacity);
-
-  if (size >= _capacity)
-    return false;
-
-  _queue.push(item);
-  if (size == 0)
-    _cond.notify_all();
-
-  return true;
+  return queue_.empty();
 }
 
 template <typename T, typename U>
-T AsyncPrioQueue<T, U>::dequeue()
+T BlockingPrioQueue<T, U>::front()
 {
-  std::unique_lock<std::mutex> lock(_mutex);
+  std::unique_lock<std::mutex> lock(mutex_);
+  pop_avail_.wait(lock,
+      [&queue_ = queue_]{ return !queue_.empty(); });
 
-  while (_queue.empty())
-    _cond.wait(lock);
+  return queue_.top();
+}
 
-  T item = _queue.top();
-  _queue.pop();
+template <typename T, typename U>
+void BlockingPrioQueue<T, U>::push(T& item)
+{
+  std::unique_lock<std::mutex> lock(mutex_);
+  push_avail_.wait(lock,
+      [&queue_ = queue_, capacity_ = capacity_]{ return queue_.size() < capacity_; });
+
+  queue_.push(item);
+  if (queue_.size() == 1)
+    pop_avail_.notify_all();
+}
+
+template <typename T, typename U>
+T BlockingPrioQueue<T, U>::dequeue()
+{
+  std::unique_lock<std::mutex> lock(mutex_);
+  pop_avail_.wait(lock,
+      [&queue_ = queue_]{ return !queue_.empty(); });
+
+  T item = queue_.top();
+  queue_.pop();
+
+  if (queue_.size() == capacity_ - 1)
+    push_avail_.notify_all();
 
   return item;
 }
 
 template <typename T, typename U>
-T AsyncPrioQueue<T, U>::top()
+void BlockingPrioQueue<T, U>::pop()
 {
-  std::unique_lock<std::mutex> lock(_mutex);
+  std::unique_lock<std::mutex> lock(mutex_);
+  pop_avail_.wait(lock,
+      [&queue_ = queue_]{ return !queue_.empty(); });
 
-  while (_queue.empty())
-    _cond.wait(lock);
+  queue_.pop();
 
-  return _queue.top();
+  if (queue_.size() == capacity_ - 1)
+    push_avail_.notify_all();
 }
 
 template <typename T, typename U>
-void AsyncPrioQueue<T, U>::pop()
-{
-  std::unique_lock<std::mutex> lock(_mutex);
-
-  while (_queue.empty())
-    _cond.wait(lock);
-
-  _queue.pop();
-}
-
-template <typename T, typename U>
-bool AsyncPrioQueue<T, U>::empty()
-{
-  std::unique_lock<std::mutex> lock(_mutex);
-
-  return _queue.empty();
-}
-
-template <typename T, typename U>
-AsyncPrioQueue<T, U>::AsyncPrioQueue(U compare)
-  : _capacity(-1), _queue(compare)
+BlockingPrioQueue<T, U>::BlockingPrioQueue(U compare)
+  : BlockingPrioQueue(1, compare)
 {
 }
 
 template <typename T, typename U>
-AsyncPrioQueue<T, U>::AsyncPrioQueue(size_t capacity, U compare)
-  : _capacity(capacity), _queue(compare)
+BlockingPrioQueue<T, U>::BlockingPrioQueue(size_t capacity, U compare)
+  : capacity_(capacity == 0 ? 1 : capacity), queue_(compare)
 {
 }
 
 template <typename T, typename U>
-AsyncPrioQueue<T, U>::~AsyncPrioQueue()
+BlockingPrioQueue<T, U>::~BlockingPrioQueue()
 {
 }
 

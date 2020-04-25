@@ -33,31 +33,32 @@
 #include <BlockingQueue.hpp>
 #include <GenericWorker.hpp>
 #include <JobBase.hpp>
-#include <JobChannel.hpp>
 #include <WorkerHandler.hpp>
 
 
 namespace cppbase {
 
-JobChannel*
+int
 GenericWorker::newChannel(size_t q_depth)
 {
-  BlockingQueue<std::shared_ptr<JobBase>>* q = new BlockingQueue<std::shared_ptr<JobBase>>(q_depth);
-  queues_.push_back(q);
+  JobQueue* queue = new JobQueue(q_depth);
+  if (!queue)
+    return -1;
 
-  JobChannel* c = new JobChannel(q);
-  channels_.push_back(c);
+  queues_.push_back(queue);
 
-  return c;
+  return queues_.size() - 1;
 }
 
-JobChannel*
-GenericWorker::getChannel(unsigned int id)
+bool
+GenericWorker::dispatchJob(std::shared_ptr<JobBase> job, int channel)
 {
-  if (id >= channels_.size())
-    return nullptr;
+  if (channel >= static_cast<int>(queues_.size()))
+    return false;
 
-  return channels_[id];
+  queues_[channel]->push(job);
+
+  return true;
 }
 
 void
@@ -65,16 +66,19 @@ GenericWorker::thread_loop()
 {
   assert(handler_);
 
-  bool next;
-  std::vector<std::shared_ptr<JobBase>> jobs;
+  std::shared_ptr<JobBase> first = nullptr;
 
   do {
-    for (auto queue : queues_)
-      jobs.push_back(queue->dequeue());
+    std::shared_ptr<JobBase> prev = nullptr;
+    std::shared_ptr<JobBase> next = nullptr;
 
-    next = handler_->onWorkerHandle(jobs);
-    jobs.clear();
-  } while (next);
+    for (JobQueue* queue : queues_) {
+      next = queue->dequeue();
+      if (prev) prev->next_ = next;
+      else first = next;
+      prev = next;
+    }
+  } while (handler_->onWorkerHandle(first));
 }
 
 
@@ -101,11 +105,8 @@ GenericWorker::GenericWorker(const std::string& name, size_t q_depth)
 
 GenericWorker::~GenericWorker()
 {
-  for (auto c : channels_)
-    delete c;
-
-  for (auto q : queues_)
-    delete q;
+  for (JobQueue* queue : queues_)
+    delete queue;
 }
 
 } // namespace cppbase

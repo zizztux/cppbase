@@ -32,6 +32,7 @@
  */
 
 #include <cstdint>
+#include <memory>
 
 
 namespace cppbase {

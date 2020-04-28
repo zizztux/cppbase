@@ -33,32 +33,38 @@
 #include <BlockingQueue.hpp>
 #include <GenericWorker.hpp>
 #include <JobBase.hpp>
+#include <JobChannel.hpp>
 #include <WorkerHandler.hpp>
 
 
 namespace cppbase {
 
-int
+JobChannel*
 GenericWorker::newChannel(size_t q_depth)
 {
-  JobQueue* queue = new JobQueue(q_depth);
+  BlockingQueue<std::shared_ptr<JobBase>>* queue = new BlockingQueue<std::shared_ptr<JobBase>>(q_depth);
   if (!queue)
-    return -1;
+    return nullptr;
+
+  JobChannel* channel = new JobChannel(queue);
+  if (!channel) {
+    delete queue;
+    return nullptr;
+  }
 
   queues_.push_back(queue);
+  channels_.push_back(channel);
 
-  return queues_.size() - 1;
+  return channel;
 }
 
-bool
-GenericWorker::dispatchJob(std::shared_ptr<JobBase> job, int channel)
+JobChannel*
+GenericWorker::getChannel(unsigned int channel)
 {
-  if (channel >= static_cast<int>(queues_.size()))
-    return false;
+  if (channel >= nchannels())
+    return nullptr;
 
-  queues_[channel]->push(job);
-
-  return true;
+  return channels_[channel];
 }
 
 void
@@ -72,7 +78,7 @@ GenericWorker::thread_loop()
     std::shared_ptr<JobBase> prev = nullptr;
     std::shared_ptr<JobBase> next = nullptr;
 
-    for (JobQueue* queue : queues_) {
+    for (BlockingQueue<std::shared_ptr<JobBase>>* queue : queues_) {
       next = queue->dequeue();
       if (prev) prev->next_ = next;
       else first = next;
@@ -105,7 +111,10 @@ GenericWorker::GenericWorker(const std::string& name, size_t q_depth)
 
 GenericWorker::~GenericWorker()
 {
-  for (JobQueue* queue : queues_)
+  for (JobChannel* channel : channels_)
+    delete channel;
+
+  for (BlockingQueue<std::shared_ptr<JobBase>>* queue : queues_)
     delete queue;
 }
 

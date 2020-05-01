@@ -72,7 +72,7 @@ OBJS += $(patsubst $(SRC_DIR)/%.cpp,$(OUTPUT_DIR)/%.o,$(filter %.cpp,$(SRCS)))
 # Build options
 #
 CPPFLAGS := -I$(shell pwd)/$(HDR_DIR) -DVERSION=\"$(VERSION_STR)\" -DBUILD=\"$(BUILD_STR)\" @CPPFLAGS@
-CXXFLAGS := -std=c++1z -fPIC -Wall -O2 @CXXFLAGS@
+CXXFLAGS := -std=c++17 -fPIC -Wall -O2 @CXXFLAGS@
 LDFLAGS := -lpthread -lstdc++fs @LDFLAGS@
 ifneq ($(DEBUG),0)
 CPPFLAGS +=

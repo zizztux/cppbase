@@ -31,7 +31,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cstdint>
 #include <memory>
 
 
@@ -41,11 +40,10 @@ class JobBase
 {
 public:     // constructor and destructor
   explicit JobBase() = default;
+  explicit JobBase(const JobBase& job) { }
   virtual ~JobBase() { }
 
 public:
-  uint64_t id_ = 0;
-
   std::shared_ptr<JobBase> next_ = nullptr;
 };
 

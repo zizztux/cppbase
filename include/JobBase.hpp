@@ -40,7 +40,6 @@ class JobBase
 {
 public:     // constructor and destructor
   explicit JobBase() = default;
-  explicit JobBase(const JobBase& job) { }
   virtual ~JobBase() { }
 
 public:

@@ -1,3 +1,6 @@
+#ifndef __LIBCPPBASE_GENERICWORKER_H__
+#define __LIBCPPBASE_GENERICWORKER_H__
+
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
  * All rights reserved.
@@ -28,42 +31,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cassert>
-#include <thread>
+#include <cstddef>
 
-#include <WorkerBase.hpp>
+#include <Worker.h>
 
 
 namespace cppbase {
 
-bool
-WorkerBase::initialize()
+class JobChannel;
+
+class GenericWorker : public Worker
 {
-  thread_ = new std::thread(&WorkerBase::thread_loop, this);
+public:
+  virtual JobChannel* newChannel(std::size_t depth = 1) = 0;
+  virtual JobChannel* channel(unsigned long channel) const = 0;
+  virtual std::size_t nchannels() const = 0;
 
-  return static_cast<bool>(thread_);
-}
-
-void
-WorkerBase::finalize()
-{
-  if (thread_) {
-    thread_->join();
-
-    delete thread_;
-    thread_ = nullptr;
-  }
-}
-
-
-WorkerBase::WorkerBase(const std::string& name)
-  : name_(name)
-{
-}
-
-WorkerBase::~WorkerBase()
-{
-  assert(!thread_);
-}
+public:     // constructor and destructor
+  virtual ~GenericWorker() { }
+};
 
 } // namespace cppbase
+
+#endif

@@ -1,5 +1,5 @@
-#ifndef __JOBBASE_HPP__
-#define __JOBBASE_HPP__
+#ifndef __LIBWORKER_THREADBASE_H__
+#define __LIBWORKER_THREADBASE_H__
 
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
@@ -31,19 +31,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <memory>
+namespace std {
+class thread;
+}
 
 
 namespace cppbase {
 
-class JobBase
+class ThreadBase
 {
-public:     // constructor and destructor
-  explicit JobBase() = default;
-  virtual ~JobBase() { }
-
 public:
-  std::shared_ptr<JobBase> next_ = nullptr;
+  virtual bool createThread() override;
+  virtual void joinThread() override;
+
+  const std::string& name() const final override { return name_; }
+  void setName(std::string_view name) final override { name_ = name; }
+
+private:
+  virtual void thread_loop() = 0;
+
+public:     // constructor and destructor
+  explicit WorkerBase() = default;
+  explicit WorkerBase(std::string_view name);
+  virtual ~WorkerBase();
+
+protected:
+  std::string name_;
+
+  std::thread* thread_ = nullptr;
+  WorkerHandler* handler_ = nullptr;
 };
 
 } // namespace cppbase

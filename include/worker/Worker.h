@@ -1,5 +1,5 @@
-#ifndef __WORKERHANDLER_HPP__
-#define __WORKERHANDLER_HPP__
+#ifndef __LIBCPPBASE_WORKER_H__
+#define __LIBCPPBASE_WORKER_H__
 
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
@@ -31,20 +31,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <memory>
+#include <string>
+#include <string_view>
 
 
 namespace cppbase {
 
-class JobBase;
+class WorkerHandler;
 
-class WorkerHandler
+class Worker
 {
 public:
-  virtual bool onWorkerHandle(std::shared_ptr<JobBase> job) = 0;
+  virtual bool start() = 0;
+  virtual void stop() = 0;
+
+  virtual void registerHandler(WorkerHandler* handler) = 0;
+
+  virtual const std::string& name() const = 0;
+  virtual void setName(std::string_view name) = 0;
 
 public:     // constructor and destructor
-  virtual ~WorkerHandler() { }
+  virtual ~Worker() { }
 };
 
 } // namespace cppbase

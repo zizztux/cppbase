@@ -1,6 +1,3 @@
-#ifndef __WORKERBASE_HPP__
-#define __WORKERBASE_HPP__
-
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
  * All rights reserved.
@@ -31,45 +28,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <string>
+#include <cassert>
+#include <thread>
 
-namespace std {
-class thread;
-}
+#include <WorkerBase.h>
 
 
 namespace cppbase {
 
-class WorkerHandler;
-
-class WorkerBase
+bool
+WorkerBase::start()
 {
-public:
-  virtual bool initialize();
-  virtual void finalize();
+  thread_ = new std::thread(&WorkerBase::thread_loop, this);
 
-  void registerHandler(WorkerHandler* handler) { handler_ = handler; }
+  return static_cast<bool>(thread_);
+}
 
-  const std::string& name() const { return name_; }
-  void setName(const std::string& name) { name_ = name; }
+void
+WorkerBase::stop()
+{
+  if (thread_) {
+    thread_->join();
 
-private:
-  virtual void thread_loop() = 0;
+    delete thread_;
+    thread_ = nullptr;
+  }
+}
 
-public:     // constructor and destructor
-  explicit WorkerBase() = default;
-  explicit WorkerBase(const std::string& name);
-  virtual ~WorkerBase();
 
-protected:
-  WorkerHandler* handler_ = nullptr;
+WorkerBase::WorkerBase(std::string_view name)
+  : name_(name)
+{
+}
 
-private:
-  std::string name_;
-
-  std::thread* thread_ = nullptr;
-};
+WorkerBase::~WorkerBase()
+{
+  assert(!thread_);
+}
 
 } // namespace cppbase
-
-#endif

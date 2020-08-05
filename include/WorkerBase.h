@@ -1,5 +1,5 @@
-#ifndef __WORKERBASE_HPP__
-#define __WORKERBASE_HPP__
+#ifndef __WORKERBASE_H__
+#define __WORKERBASE_H__
 
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee

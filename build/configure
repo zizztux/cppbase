@@ -585,7 +585,7 @@ PACKAGE_STRING='C++ Base Library 0.1.0'
 PACKAGE_BUGREPORT='zizztux@gmail.com'
 PACKAGE_URL='https://github.com/zizztux/libcppbase'
 
-ac_unique_file="../include/BlockingQueue.hpp"
+ac_unique_file="../include/libcppbase/BlockingQueue.h"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 EGREP

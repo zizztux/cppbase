@@ -1,5 +1,5 @@
-#ifndef __WORKERHANDLER_HPP__
-#define __WORKERHANDLER_HPP__
+#ifndef __JOBBASE_H__
+#define __JOBBASE_H__
 
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
@@ -36,15 +36,14 @@
 
 namespace cppbase {
 
-class JobBase;
-
-class WorkerHandler
+class JobBase
 {
-public:
-  virtual bool onWorkerHandle(std::shared_ptr<JobBase> job) = 0;
-
 public:     // constructor and destructor
-  virtual ~WorkerHandler() { }
+  explicit JobBase() = default;
+  virtual ~JobBase() { }
+
+public:
+  std::shared_ptr<JobBase> next_ = nullptr;
 };
 
 } // namespace cppbase

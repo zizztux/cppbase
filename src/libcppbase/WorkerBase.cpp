@@ -1,6 +1,3 @@
-#ifndef __JOBBASE_HPP__
-#define __JOBBASE_HPP__
-
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
  * All rights reserved.
@@ -31,21 +28,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <memory>
+#include <cassert>
+#include <thread>
+
+#include <WorkerBase.h>
 
 
 namespace cppbase {
 
-class JobBase
+bool
+WorkerBase::initialize()
 {
-public:     // constructor and destructor
-  explicit JobBase() = default;
-  virtual ~JobBase() { }
+  thread_ = new std::thread(&WorkerBase::thread_loop, this);
 
-public:
-  std::shared_ptr<JobBase> next_ = nullptr;
-};
+  return static_cast<bool>(thread_);
+}
+
+void
+WorkerBase::finalize()
+{
+  if (thread_) {
+    thread_->join();
+
+    delete thread_;
+    thread_ = nullptr;
+  }
+}
+
+
+WorkerBase::WorkerBase(const std::string& name)
+  : name_(name)
+{
+}
+
+WorkerBase::~WorkerBase()
+{
+  assert(!thread_);
+}
 
 } // namespace cppbase
-
-#endif

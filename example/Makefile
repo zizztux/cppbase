@@ -36,8 +36,8 @@ LIBCPPBASE_DIR := /home/zizztux/workspace/library/libcppbase/build/out
 #
 # Directories and files
 #
-HDRS := $(wildcard *.h *.hpp)
-SRCS := $(wildcard *.c *.cc *.cpp)
+HDRS := $(wildcard *.h)
+SRCS := $(wildcard *.c *.cpp)
 
 #
 # Build options

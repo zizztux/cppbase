@@ -28,42 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cassert>
-#include <thread>
-
-#include <WorkerBase.hpp>
+#include <gtest/gtest.h>
 
 
-namespace cppbase {
-
-bool
-WorkerBase::initialize()
+int
+main(int argc, char *argv[])
 {
-  thread_ = new std::thread(&WorkerBase::thread_loop, this);
+  ::testing::InitGoogleTest(&argc, argv);
 
-  return static_cast<bool>(thread_);
+  return RUN_ALL_TESTS();
 }
-
-void
-WorkerBase::finalize()
-{
-  if (thread_) {
-    thread_->join();
-
-    delete thread_;
-    thread_ = nullptr;
-  }
-}
-
-
-WorkerBase::WorkerBase(const std::string& name)
-  : name_(name)
-{
-}
-
-WorkerBase::~WorkerBase()
-{
-  assert(!thread_);
-}
-
-} // namespace cppbase

@@ -1,3 +1,6 @@
+#ifndef __BLOCKINGQUEUE_FIXTURE_H__
+#define __BLOCKINGQUEUE_FIXTURE_H__
+
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
  * All rights reserved.
@@ -28,25 +31,77 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <string>
 #include <gtest/gtest.h>
 
+#include <libcppbase/BlockingQueue.h>
 
-int sum(int a, int b)
+
+constexpr size_t q_depth = 10;
+
+struct Item
 {
-  return a + b;
-}
+  int id_;
+  std::string name_;
+};
+using Item = struct Item;
 
-
-TEST(Sum, SumAandB)
+class BlockingQueueFixture : public ::testing::Test
 {
-  EXPECT_EQ(sum(2, 3), 5);
-}
+protected:
+  void SetUp() override {
+  }
 
+  void TearDown() override {
+  }
 
-int
-main(int argc, char *argv[])
-{
-  ::testing::InitGoogleTest(&argc, argv);
+private:
+  void setupQueueInt(size_t size) {
+    for (unsigned int i = 0; i < size; ++i)
+      queue_int_.enqueue(i);
+  }
 
-  return RUN_ALL_TESTS();
-}
+  void setupQueueIntp(size_t size) {
+    for (unsigned int i = 0; i < size; ++i) {
+      int* p = new int;
+      *p = i;
+      queue_intp_.enqueue(p);
+    }
+  }
+
+  void setupQueueItem(size_t size) {
+    for (unsigned int i = 0; i < size; ++i)
+      queue_item_.enqueue(Item{i, std::string("Item_") + std::to_string(i)});
+  }
+
+  void setupQueueItemp(size_t size) {
+    for (unsigned int i = 0; i < size; ++i) {
+      int* p = new Item{i, "Item_"};
+      p->name_ += std::to_string(i);
+      queue_item_.enqueue(p);
+    }
+  }
+
+public:
+  explicit BlockingQueueFixture()
+    : queue_int_(q_depth), queue_intp_(q_depth),
+      queue_item_(q_depth), queue_itemp_(q_depth)
+  {
+    setupQueueInt(q_depth / 2);
+    setupQueueIntp(q_depth / 2);
+    setupQueueItem(q_depth / 2);
+    setupQueueItemp(q_depth / 2);
+  }
+
+  virtual ~BlockingQueueFixture() {
+  }
+
+protected:
+  cppbase::BlockingQueue<int> queue_int_;
+  cppbase::BlockingQueue<int*> queue_intp_;
+
+  cppbase::BlockingQueue<Item> queue_item_;
+  cppbase::BlockingQueue<Item*> queue_itemp_;
+};
+
+#endif

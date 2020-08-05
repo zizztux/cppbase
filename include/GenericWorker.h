@@ -1,5 +1,5 @@
-#ifndef __JOBCHANNEL_HPP__
-#define __JOBCHANNEL_HPP__
+#ifndef __GENERICWORKER_H__
+#define __GENERICWORKER_H__
 
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
@@ -31,7 +31,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <cstddef>
 #include <memory>
+#include <vector>
+
+#include <WorkerBase.h>
 
 
 namespace cppbase {
@@ -39,19 +43,28 @@ namespace cppbase {
 template <typename T>
 class BlockingQueue;
 class JobBase;
+class JobChannel;
 
-class JobChannel
+class GenericWorker : public WorkerBase
 {
 public:
-  virtual void dispatchJob(std::shared_ptr<JobBase> job);
+  JobChannel* newChannel(size_t q_depth = 1);
+  JobChannel* getChannel(unsigned int channel);
+  size_t nchannels() const { return channels_.size(); }
+
+private:    // overridings
+  virtual void thread_loop() override;
 
 public:     // constructor and destructor
-  explicit JobChannel() = delete;
-  explicit JobChannel(BlockingQueue<std::shared_ptr<JobBase>>* queue);
-  virtual ~JobChannel();
+  explicit GenericWorker();
+  explicit GenericWorker(const std::string& name);
+  explicit GenericWorker(size_t q_depth);
+  explicit GenericWorker(const std::string& name, size_t q_depth);
+  virtual ~GenericWorker();
 
 private:
-  BlockingQueue<std::shared_ptr<JobBase>>* queue_ = nullptr;
+  std::vector<BlockingQueue<std::shared_ptr<JobBase>>*> queues_;
+  std::vector<JobChannel*> channels_;
 };
 
 } // namespace cppbase

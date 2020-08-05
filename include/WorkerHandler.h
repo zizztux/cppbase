@@ -1,3 +1,6 @@
+#ifndef __WORKERHANDLER_H__
+#define __WORKERHANDLER_H__
+
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
  * All rights reserved.
@@ -28,50 +31,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <iostream>
-
-#include <GenericWorker.h>
-#include <PeriodicWorker.h>
+#include <memory>
 
 
-class PreProcessor : public GenericWorker
+namespace cppbase {
+
+class JobBase;
+
+class WorkerHandler
 {
-private:
-  virtual bool processJob(void* job) { std::cout << "Job: " << job << std::endl; return job != 0; }
-
 public:
-  PreProcessor() = default;
-  virtual ~PreProcessor() { }
+  virtual bool onWorkerHandle(std::shared_ptr<JobBase> job) = 0;
+
+public:     // constructor and destructor
+  virtual ~WorkerHandler() { }
 };
 
-class PeriodicCall : public PeriodicWorker
-{
-private:
-  virtual bool processJob() { std::cout << __FUNCTION__ << std::endl; return true; }
+} // namespace cppbase
 
-public:
-  PeriodicCall() = default;
-  PeriodicCall(unsigned int freq) : PeriodicWorker(freq) { }
-  virtual ~PeriodicCall() { }
-};
-
-
-int
-main(int argc, char *argv[])
-{
-  PreProcessor worker;
-  worker.start();
-
-  worker.scheduleJob((void*)5);
-  worker.scheduleJob((void*)2);
-  worker.scheduleJob((void*)9);
-  worker.scheduleJob((void*)0);
-
-  worker.finalize();
-
-  PeriodicCall periodic;
-  periodic.start();
-  periodic.finalize();
-
-  return 0;
-}
+#endif

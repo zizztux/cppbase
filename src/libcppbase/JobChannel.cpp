@@ -28,9 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <BlockingQueue.hpp>
-#include <JobBase.hpp>
-#include <JobChannel.hpp>
+#include <libcppbase/BlockingQueue.h>
+#include <JobBase.h>
+#include <JobChannel.h>
 
 
 namespace cppbase {

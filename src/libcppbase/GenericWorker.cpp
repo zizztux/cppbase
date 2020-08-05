@@ -30,11 +30,11 @@
 
 #include <cassert>
 
-#include <BlockingQueue.hpp>
-#include <GenericWorker.hpp>
-#include <JobBase.hpp>
-#include <JobChannel.hpp>
-#include <WorkerHandler.hpp>
+#include <libcppbase/BlockingQueue.h>
+#include <GenericWorker.h>
+#include <JobBase.h>
+#include <JobChannel.h>
+#include <WorkerHandler.h>
 
 
 namespace cppbase {

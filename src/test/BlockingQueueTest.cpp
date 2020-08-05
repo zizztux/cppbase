@@ -1,6 +1,3 @@
-#ifndef __SINGLETON_HPP__
-#define __SINGLETON_HPP__
-
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
  * All rights reserved.
@@ -31,27 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <utility>
+#include "BlockingQueueFixture.h"
 
 
-namespace cppbase {
-
-template <typename T>
-class Singleton
+TEST_F(BlockingQueueFixture, BlockingQueueWithPrimitive)
 {
-private:    // constructor and destructor
-  Singleton(const Singleton&) = delete;
-  Singleton& operator=(const Singleton&) = delete;
-
-public:
-  template <typename ... Ts>
-  static T& getInstance(Ts&& ... args)
-  {
-    static T instance{std::forward<Ts>(args) ...};
-    return instance;
-  }
-};
-
-} // namespace cppbase
-
-#endif
+  EXPECT_EQ(queue_int_.size(), 5);
+}

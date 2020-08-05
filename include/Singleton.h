@@ -1,5 +1,5 @@
-#ifndef __GENERICWORKER_HPP__
-#define __GENERICWORKER_HPP__
+#ifndef __SINGLETON_H__
+#define __SINGLETON_H__
 
 /*
  * Copyright (c) 2017-2020, SeungRyeol Lee
@@ -31,40 +31,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cstddef>
-#include <memory>
-#include <vector>
-
-#include <WorkerBase.hpp>
+#include <utility>
 
 
 namespace cppbase {
 
 template <typename T>
-class BlockingQueue;
-class JobBase;
-class JobChannel;
-
-class GenericWorker : public WorkerBase
+class Singleton
 {
+private:    // constructor and destructor
+  Singleton(const Singleton&) = delete;
+  Singleton& operator=(const Singleton&) = delete;
+
 public:
-  JobChannel* newChannel(size_t q_depth = 1);
-  JobChannel* getChannel(unsigned int channel);
-  size_t nchannels() const { return channels_.size(); }
-
-private:    // overridings
-  virtual void thread_loop() override;
-
-public:     // constructor and destructor
-  explicit GenericWorker();
-  explicit GenericWorker(const std::string& name);
-  explicit GenericWorker(size_t q_depth);
-  explicit GenericWorker(const std::string& name, size_t q_depth);
-  virtual ~GenericWorker();
-
-private:
-  std::vector<BlockingQueue<std::shared_ptr<JobBase>>*> queues_;
-  std::vector<JobChannel*> channels_;
+  template <typename ... Ts>
+  static T& getInstance(Ts&& ... args)
+  {
+    static T instance{std::forward<Ts>(args) ...};
+    return instance;
+  }
 };
 
 } // namespace cppbase

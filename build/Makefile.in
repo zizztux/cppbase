@@ -56,16 +56,15 @@ export RANLIB := $(CROSS_COMPILE)@RANLIB@
 #
 TOP_DIR := ..
 HDR_DIR := $(TOP_DIR)/include
-SRC_DIR := $(TOP_DIR)/src
-TEST_DIR := $(TOP_DIR)/test
+SRC_DIR := $(TOP_DIR)/src/libcppbase
+TEST_DIR := $(TOP_DIR)/src/test
 OUTPUT_DIR := ./obj
 INSTALL_DIR := @prefix@
 
 OUTPUT := $(OUTPUT_DIR)/$(PROJECT).so.$(VERSION)
-HDRS += $(wildcard $(HDR_DIR)/*.h $(HDR_DIR)/*.hpp)
-SRCS += $(wildcard $(SRC_DIR)/*.c $(SRC_DIR)/*.cc $(SRC_DIR)/*.cpp)
+HDRS += $(wildcard $(HDR_DIR)/libcppbase/*.h)
+SRCS += $(wildcard $(SRC_DIR)/*.c $(SRC_DIR)/*.cpp)
 OBJS += $(patsubst $(SRC_DIR)/%.c,$(OUTPUT_DIR)/%.o,$(filter %.c,$(SRCS)))
-OBJS += $(patsubst $(SRC_DIR)/%.cc,$(OUTPUT_DIR)/%.o,$(filter %.cc,$(SRCS)))
 OBJS += $(patsubst $(SRC_DIR)/%.cpp,$(OUTPUT_DIR)/%.o,$(filter %.cpp,$(SRCS)))
 
 #
@@ -99,7 +98,7 @@ endif
 install: install-lib install-hdr
 
 install-hdr: $(HDRS)
-	$(INSTALL) -D -m 0644 -t $(INSTALL_DIR)/include $^
+	$(INSTALL) -D -m 0644 -t $(INSTALL_DIR)/include/libcppbase $^
 
 install-lib: $(OUTPUT)
 	$(INSTALL) -D -m 0644 -s --strip-program=$(CROSS_COMPILE)strip -t $(INSTALL_DIR)/lib $^
@@ -110,10 +109,10 @@ test: $(OUTPUT)
 	@$(MAKE) -C $(TEST_DIR)
 
 ctags:
-	ctags `find $(TOP_DIR)/ \( -name '*.[chsS]' -o -name '*.hpp' -o -name '*.cc' -o -name '*.cpp' \) -print`
+	ctags `find $(TOP_DIR)/ \( -name '*.[chsS]' -o -name '*.cpp' \) -print`
 
 cscope:
-	find $(TOP_DIR)/ \( -name '*.[chsS]' -o -name '*.hpp' -o -name '*.cc' -o -name '*.cpp' \) -print > cscope.files
+	find $(TOP_DIR)/ \( -name '*.[chsS]' -o -name '*.cpp' \) -print > cscope.files
 	cscope -b -q -k
 
 clean:

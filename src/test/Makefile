@@ -31,9 +31,9 @@
 #
 # Directories and files
 #
-LIBCPPBASE_DIR := ../build/out
-TEST_DIRS := $(shell find . -maxdepth 1 -mindepth 1 -type d)
-SRCS := $(foreach dir,$(TEST_DIRS),$(wildcard $(dir)/*.c $(dir)/*.cc $(dir)/*.cpp))
+LIBCPPBASE_DIR := ../../build/out
+
+SRCS := $(wildcard ./*.c ./*.cpp)
 
 #
 # Build options
